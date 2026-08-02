@@ -69,7 +69,7 @@ export async function getShowcaseRepos(): Promise<GitHubRepo[]> {
     `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&sort=updated`,
     { 
       headers,
-      next: { revalidate: 3600, tags: ["github-repos"] } 
+      next: { revalidate: 60, tags: ["github-repos"] } 
     }
   );
 
@@ -86,11 +86,23 @@ export async function getShowcaseRepos(): Promise<GitHubRepo[]> {
         return getMockProjects();
     }
 
-    const showcase = repos.filter((repo) => repo.topics?.includes(SHOWCASE_TOPIC));
+    // Clean homepage URLs if empty string or missing protocol
+    const sanitizedRepos = repos.map((repo) => {
+      let homepage = repo.homepage ? repo.homepage.trim() : null;
+      if (homepage && !homepage.startsWith("http://") && !homepage.startsWith("https://")) {
+        homepage = `https://${homepage}`;
+      }
+      return {
+        ...repo,
+        homepage: homepage && homepage.length > 0 ? homepage : null,
+      };
+    });
+
+    const showcase = sanitizedRepos.filter((repo) => repo.topics?.includes(SHOWCASE_TOPIC));
     if (showcase.length > 0) return showcase;
     
     // fallback to non-forks if no showcase topic found
-    const fallback = repos.filter((r) => !r.fork).slice(0, 10);
+    const fallback = sanitizedRepos.filter((r) => !r.fork).slice(0, 10);
     if (fallback.length > 0) return fallback;
     
     return getMockProjects();
