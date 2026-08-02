@@ -14,7 +14,7 @@ interface PaginatedProjectsProps {
   repos: GitHubRepo[];
 }
 
-const ITEMS_PER_PAGE = 2;
+const ITEMS_PER_PAGE = 4;
 
 export default function PaginatedProjects({ repos }: PaginatedProjectsProps) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,7 +33,7 @@ export default function PaginatedProjects({ repos }: PaginatedProjectsProps) {
   useGSAP(() => {
     if (hasMounted.current) return;
     hasMounted.current = true;
-    
+
     const wrappers = gsap.utils.toArray<HTMLElement>('.gsap-parallax-wrapper');
     if (wrappers.length > 0) {
       // 1. Entrance animation using ScrollTrigger.batch
@@ -47,7 +47,7 @@ export default function PaginatedProjects({ repos }: PaginatedProjectsProps) {
       wrappers.forEach((wrapper, i) => {
         const speed = i % 2 === 0 ? 0.95 : 1.05; // Alternate speeds
         gsap.to(wrapper, {
-          yPercent: (speed - 1) * -100, 
+          yPercent: (speed - 1) * -100,
           ease: "none",
           scrollTrigger: {
             trigger: containerRef.current,
@@ -62,22 +62,26 @@ export default function PaginatedProjects({ repos }: PaginatedProjectsProps) {
 
   const paginate = (newPage: number) => {
     if (newPage === currentPage || isAnimating || newPage < 1 || newPage > totalPages) return;
-    
-    // Smooth scroll to top (ASCEND_TO_TOP)
-    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    const smoother = (window as any).ScrollSmoother?.get();
+    if (smoother) {
+      smoother.scrollTo(0, true);
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
 
     setIsAnimating(true);
     const ctx = gsap.context(() => {
       const direction = newPage > currentPage ? 1 : -1;
       const elements = itemsRef.current?.children;
-      
+
       if (elements) {
         const tl = gsap.timeline({
           onComplete: () => {
             setCurrentPage(newPage);
           }
         });
-        
+
         Array.from(elements).forEach((el, index) => {
           tl.to(el, {
             opacity: 0,
@@ -90,7 +94,7 @@ export default function PaginatedProjects({ repos }: PaginatedProjectsProps) {
         });
       }
     }, containerRef);
-    
+
     return () => ctx.revert();
   };
 
@@ -99,9 +103,9 @@ export default function PaginatedProjects({ repos }: PaginatedProjectsProps) {
       const ctx = gsap.context(() => {
         const elements = itemsRef.current?.children;
         if (elements) {
-          gsap.fromTo(elements, 
-            { 
-              opacity: 0, 
+          gsap.fromTo(elements,
+            {
+              opacity: 0,
               x: 200,
               scale: 0.8,
               filter: "blur(12px)",
@@ -170,16 +174,16 @@ export default function PaginatedProjects({ repos }: PaginatedProjectsProps) {
             disabled={currentPage === 1 || isAnimating}
             className="group relative inline-flex items-center gap-3 font-mono text-xs font-bold uppercase tracking-widest px-6 py-3 border border-signal-cyan/40 bg-signal-cyan/10 text-signal-cyan transition-all duration-300 hover:border-signal-cyan hover:bg-signal-cyan hover:text-black hover:shadow-[0_0_20px_#00F0FF] disabled:opacity-30 disabled:pointer-events-none cursor-pointer w-full sm:w-auto justify-center"
           >
-            <span className="transition-transform duration-300 group-hover:-translate-x-1.5">←</span> 
+            <span className="transition-transform duration-300 group-hover:-translate-x-1.5">←</span>
             <span>PREV_CHUNK</span>
           </button>
-          
+
           {/* PAGE CHUNK TELEMETRY */}
           <div className="font-mono text-xs tracking-widest text-white flex items-center gap-3 bg-black/60 border border-white/10 px-5 py-2">
             <span className="w-2 h-2 bg-signal-yellow rounded-full animate-pulse" />
-            <DecryptedText 
-              text={`BLOCK [ ${currentPage.toString().padStart(2, '0')} / ${totalPages.toString().padStart(2, '0')} ]`} 
-              animateOn="hover" 
+            <DecryptedText
+              text={`BLOCK [ ${currentPage.toString().padStart(2, '0')} / ${totalPages.toString().padStart(2, '0')} ]`}
+              animateOn="hover"
               speed={30}
             />
           </div>

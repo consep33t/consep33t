@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import DecryptedText from "@/components/DecryptedText";
 import GlitchText from "@/components/GlitchText";
+import Image from "next/image";
 import Triangulation from "@/components/Triangulation";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -44,7 +45,7 @@ export default function ProfilePage() {
           }
         });
       });
-      
+
     }, containerRef);
     return () => ctx.revert();
   }, []);
@@ -82,20 +83,25 @@ export default function ProfilePage() {
             <div className="glass-panel p-4 sm:p-8 hud-bracket relative group overflow-hidden shadow-[0_0_30px_rgba(0,240,255,0.08)]">
               {/* Animated Laser Line */}
               <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-signal-cyan to-transparent translate-y-[-100%] group-hover:translate-y-[450px] transition-transform duration-[3s] ease-linear pointer-events-none" />
-              
+
               {/* Avatar Frame */}
-              <div className="w-24 h-24 sm:w-28 sm:h-28 border-2 border-dashed border-signal-cyan/60 p-1 mb-6 relative mx-auto group-hover:border-signal-pink transition-colors duration-500">
-                <div className="w-full h-full bg-signal-cyan/10 flex items-center justify-center relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-tr from-signal-cyan/20 to-signal-pink/20 opacity-50 group-hover:opacity-100 transition-opacity" />
-                  <span className="font-display text-xl sm:text-2xl font-black text-white relative z-10 tracking-widest">
-                    AP
-                  </span>
+              <div className="w-28 h-28 sm:w-32 sm:h-32 border-2 border-dashed border-signal-cyan/60 p-1 mb-6 relative mx-auto group-hover:border-signal-pink transition-colors duration-500 rounded-lg overflow-visible">
+                <div className="w-full h-full bg-signal-cyan/10 flex items-center justify-center relative overflow-hidden rounded-md">
+                  <Image
+                    src="/profile.jpeg"
+                    alt="Ageng Prayoga Profile Photo"
+                    fill
+                    sizes="128px"
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    priority
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-tr from-signal-cyan/20 to-signal-pink/20 opacity-30 group-hover:opacity-60 transition-opacity pointer-events-none" />
                 </div>
                 {/* HUD Elements */}
                 <div className="absolute -right-7 top-0 text-[10px] text-signal-pink font-mono animate-pulse font-bold">REC ●</div>
                 <div className="absolute -bottom-5 -left-2 text-[10px] text-signal-cyan font-mono font-bold">v3.29</div>
               </div>
-              
+
               <div className="text-center mb-6">
                 <h2 className="font-display text-xl sm:text-2xl font-black text-white mb-1 tracking-wider break-words">
                   <GlitchText text="Ageng Prayoga" />
@@ -104,7 +110,7 @@ export default function ProfilePage() {
                   <DecryptedText text="IOT & FULL-STACK SOFTWARE ENGINEER" animateOn="view" speed={40} />
                 </p>
               </div>
-              
+
               <div className="space-y-3 font-mono text-xs text-gray-400 border-t border-white/10 pt-4">
                 <div className="flex flex-col sm:flex-row sm:justify-between border-b border-white/5 pb-1.5 gap-1">
                   <span>LOCATION:</span>
@@ -136,8 +142,8 @@ export default function ProfilePage() {
               </h3>
               <div className="flex flex-wrap gap-2">
                 {["React", "Next.js", "Vue", "Go", "Express.js", "Python", "FastAPI", "SQL Expert", "ESP32", "Sensors", "Cisco Network", "CI/CD"].map((skill) => (
-                  <span 
-                    key={skill} 
+                  <span
+                    key={skill}
                     className="px-2.5 py-1 bg-white/5 border border-white/10 text-[10px] sm:text-[11px] font-mono text-gray-300 hover:text-signal-cyan hover:border-signal-cyan transition-all cursor-pointer"
                   >
                     #{skill}
@@ -149,7 +155,7 @@ export default function ProfilePage() {
 
           {/* Right Column - Profile, Skripsi, Leadership */}
           <div className="col-span-1 md:col-span-8 space-y-6 sm:space-y-10">
-            
+
             {/* Career Goal & Profile Card */}
             <div className="glass-panel p-4 sm:p-8 hud-bracket border-signal-cyan/40 hover:border-signal-cyan transition-all duration-300 group profile-fade-up">
               <h3 className="font-mono text-lg sm:text-xl tracking-widest text-signal-cyan mb-3 sm:mb-4 flex items-center gap-3 font-bold break-words">

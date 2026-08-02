@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
 import DecryptedText from "./DecryptedText";
 import GlitchText from "./GlitchText";
@@ -125,10 +126,24 @@ export default function Hero() {
           className="mb-8 sm:mb-10 w-full max-w-2xl border-r-2 sm:border-r-4 border-signal-pink bg-black/40 p-4 sm:p-8 shadow-[0_0_40px_rgba(255,46,159,0.15)] backdrop-blur-md relative overflow-hidden group rounded-l-xl sm:rounded-l-2xl"
         >
           <div className="absolute top-0 left-0 w-40 h-40 bg-signal-pink/10 blur-[50px] group-hover:bg-signal-pink/20 transition-all duration-700" />
-          <h2 className="font-mono text-xs sm:text-sm text-signal-pink uppercase tracking-widest mb-3 sm:mb-4 flex justify-end items-center gap-2 sm:gap-3 font-bold flex-wrap">
-            <DecryptedText text="IOT & FULL-STACK SOFTWARE ENGINEER // 0x01" speed={40} />
-            <span className="text-lg sm:text-xl">⚡</span>
-          </h2>
+          <div className="flex flex-col sm:flex-row items-end sm:items-center justify-end gap-4 mb-4">
+            <div className="relative w-16 h-16 sm:w-20 sm:h-20 border-2 border-dashed border-signal-pink/80 p-0.5 rounded-lg overflow-hidden shrink-0 shadow-[0_0_15px_rgba(255,46,159,0.3)]">
+              <Image
+                src="/profile.jpeg"
+                alt="Ageng Prayoga"
+                fill
+                sizes="80px"
+                className="object-cover rounded-md group-hover:scale-110 transition-transform duration-500"
+                priority
+              />
+            </div>
+            <div className="text-right">
+              <h2 className="font-mono text-xs sm:text-sm text-signal-pink uppercase tracking-widest flex justify-end items-center gap-2 font-bold flex-wrap">
+                <DecryptedText text="IOT & FULL-STACK SOFTWARE ENGINEER // 0x01" speed={40} />
+                <span className="text-lg sm:text-xl">⚡</span>
+              </h2>
+            </div>
+          </div>
           <p className="text-sm sm:text-lg lg:text-xl leading-relaxed text-gray-300 font-sans text-right [text-wrap:balance]">
             Lulusan S1 Teknik Informatika ITBI Medan. Pengembang software <strong className="text-white">Full-Stack & IoT</strong> berpengalaman merancang sistem otonom cerdas, arsitektur backend scalable, serta aplikasi web & mobile terintegrasi Kecerdasan Buatan.
           </p>

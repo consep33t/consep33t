@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2026-08-03
+
+### Full Repositories Showcase & Profile Avatar Integration
+- **Profile Photo (`public/profile.jpeg`)**: Integrated official profile photograph into `components/Hero.tsx` bio card and `app/profile/page.tsx` HUD avatar frame.
+- **Unlimited Repositories Fetching (`lib/github.ts`)**: Removed fallback cutoff limits (previously sliced to 5-10 repos) to fetch and display ALL public GitHub repositories for `Consep33t`.
+- **Enhanced Pagination Grid (`components/PaginatedProjects.tsx`)**: Increased grid pagination to 4 items per page (`ITEMS_PER_PAGE = 4`) for smoother multi-page navigation across all repositories.
+
 ## [1.1.0] - 2026-08-03
 
 ### Mobile Responsiveness & Container Overflow Overhaul

@@ -99,11 +99,14 @@ export async function getShowcaseRepos(): Promise<GitHubRepo[]> {
     });
 
     const showcase = sanitizedRepos.filter((repo) => repo.topics?.includes(SHOWCASE_TOPIC));
-    if (showcase.length > 0) return showcase;
+    const others = sanitizedRepos.filter((repo) => !repo.topics?.includes(SHOWCASE_TOPIC) && !repo.fork);
     
-    // fallback to non-forks if no showcase topic found
-    const fallback = sanitizedRepos.filter((r) => !r.fork).slice(0, 10);
-    if (fallback.length > 0) return fallback;
+    // Combine showcase repos first, followed by all other non-fork repositories
+    const combined = [...showcase, ...others];
+    if (combined.length > 0) return combined;
+    
+    // If no non-fork repos, return all sanitized repos
+    if (sanitizedRepos.length > 0) return sanitizedRepos;
     
     return getMockProjects();
   } catch (e) {
