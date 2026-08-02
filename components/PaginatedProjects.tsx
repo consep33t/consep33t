@@ -60,15 +60,20 @@ export default function PaginatedProjects({ repos }: PaginatedProjectsProps) {
     }
   }, { scope: containerRef });
 
-  const paginate = (newPage: number) => {
-    if (newPage === currentPage || isAnimating || newPage < 1 || newPage > totalPages) return;
-
+  const handleScrollToTop = () => {
+    // If GSAP ScrollSmoother is active, use it. Otherwise fallback to window.scrollTo
     const smoother = (window as any).ScrollSmoother?.get();
     if (smoother) {
       smoother.scrollTo(0, true);
     } else {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
+  };
+
+  const paginate = (newPage: number) => {
+    if (newPage === currentPage || isAnimating || newPage < 1 || newPage > totalPages) return;
+
+    handleScrollToTop();
 
     setIsAnimating(true);
     const ctx = gsap.context(() => {
