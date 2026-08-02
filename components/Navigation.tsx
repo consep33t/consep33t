@@ -38,22 +38,22 @@ export default function Navigation() {
       {/* Top laser scan line */}
       <div className="absolute top-0 left-0 w-full h-[1.5px] bg-gradient-to-r from-transparent via-signal-cyan to-transparent opacity-60 animate-[laser_3s_linear_infinite]" />
 
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3.5 font-sans">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 py-3 sm:py-3.5 font-sans">
         {/* Brand Logo */}
         <TransitionLink
           href="/"
           data-cursor="hover"
           data-cursor-label="GO_HOME"
-          className="group relative flex items-center gap-3 font-display text-sm tracking-[0.2em] text-white"
+          className="group relative flex items-center gap-2 sm:gap-3 font-display text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] text-white"
         >
-          <div className="relative flex h-9 w-9 items-center justify-center border border-signal-cyan/60 bg-signal-cyan/10 transition-colors duration-300 group-hover:border-signal-pink group-hover:bg-signal-pink/10">
-            <span className="font-mono text-xs font-bold text-signal-cyan group-hover:text-signal-pink">C33</span>
+          <div className="relative flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center border border-signal-cyan/60 bg-signal-cyan/10 transition-colors duration-300 group-hover:border-signal-pink group-hover:bg-signal-pink/10 shrink-0">
+            <span className="font-mono text-[10px] sm:text-xs font-bold text-signal-cyan group-hover:text-signal-pink">C33</span>
             <div className="absolute -top-1 -left-1 h-1.5 w-1.5 bg-signal-cyan" />
             <div className="absolute -bottom-1 -right-1 h-1.5 w-1.5 bg-signal-pink" />
           </div>
-          <div className="flex flex-col">
-            <GlitchText text="CONSEP33T" className="font-black text-base text-white tracking-widest" />
-            <span className="font-mono text-[9px] text-signal-cyan tracking-widest font-bold">// AGENG.PRAYOGA</span>
+          <div className="flex flex-col min-w-0">
+            <GlitchText text="CONSEP33T" className="font-black text-xs sm:text-base text-white tracking-wider sm:tracking-widest truncate" />
+            <span className="font-mono text-[8px] sm:text-[9px] text-signal-cyan tracking-wider sm:tracking-widest font-bold truncate">// AGENG.PRAYOGA</span>
           </div>
         </TransitionLink>
 

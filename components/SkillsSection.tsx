@@ -71,18 +71,18 @@ export default function SkillsSection() {
   }, [activeCategory]);
 
   return (
-    <section className="relative mx-auto max-w-7xl px-6 py-32 sm:px-12 font-sans overflow-hidden" ref={containerRef}>
+    <section className="relative mx-auto max-w-7xl px-4 sm:px-12 py-16 sm:py-32 font-sans overflow-hidden" ref={containerRef}>
       
       {/* Background Decorative Element */}
       <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1/3 h-[120%] bg-signal-pink/5 blur-[150px] -z-10 pointer-events-none" data-speed="0.7" />
 
       {/* Header */}
-      <div className="mb-16 md:mb-24 relative" data-speed="1.05">
-        <div className="flex items-center gap-3 font-mono text-xs text-signal-pink uppercase tracking-widest mb-4">
+      <div className="mb-10 sm:mb-16 md:mb-24 relative" data-speed="1.05">
+        <div className="flex items-center gap-3 font-mono text-xs text-signal-pink uppercase tracking-widest mb-3 sm:mb-4">
           <span className="h-2 w-2 rounded-full bg-signal-pink animate-pulse shadow-[0_0_10px_#FF2E9F]" />
           <span>// NEURAL_AUGMENTATIONS</span>
         </div>
-        <h2 className="font-display text-5xl md:text-7xl font-black uppercase tracking-tighter text-white mb-6">
+        <h2 className="font-display text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter text-white mb-4 sm:mb-6 break-words">
           <GlitchText text="SYSTEM" />
           <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-signal-pink to-signal-yellow">
@@ -92,12 +92,12 @@ export default function SkillsSection() {
       </div>
 
       {/* Category Filter Tabs */}
-      <div className="flex flex-wrap gap-3 mb-16" data-speed="1.1">
+      <div className="flex flex-wrap gap-2 sm:gap-3 mb-10 sm:mb-16" data-speed="1.1">
         {SKILL_CATEGORIES.map((cat) => (
           <button
             key={cat.id}
             onClick={() => setActiveCategory(cat.id)}
-            className={`font-mono text-xs px-5 py-2.5 uppercase tracking-widest transition-all duration-300 relative overflow-hidden group ${
+            className={`font-mono text-[10px] sm:text-xs px-3 sm:px-5 py-1.5 sm:py-2.5 uppercase tracking-widest transition-all duration-300 relative overflow-hidden group ${
               activeCategory === cat.id
                 ? "text-black font-bold"
                 : "text-gray-400 border border-white/10 hover:border-signal-pink/50 hover:text-white bg-[#0A0A0F]"
@@ -118,32 +118,32 @@ export default function SkillsSection() {
       </div>
 
       {/* Skills Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-speed="0.95">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" data-speed="0.95">
         {filteredSkills.map((skill, idx) => (
           <div 
             key={idx} 
-            className="group relative bg-[#0A0A0F]/80 backdrop-blur-md p-6 border border-white/5 hover:border-signal-pink/50 transition-all duration-500 overflow-hidden cursor-default hover:shadow-[0_0_30px_rgba(255,46,159,0.15)]"
+            className="group relative bg-[#0A0A0F]/80 backdrop-blur-md p-4 sm:p-6 border border-white/5 hover:border-signal-pink/50 transition-all duration-500 overflow-hidden cursor-default hover:shadow-[0_0_30px_rgba(255,46,159,0.15)]"
           >
             {/* HUD Corners */}
             <span className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/30 group-hover:border-signal-pink transition-colors" />
             <span className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/30 group-hover:border-signal-pink transition-colors" />
 
-            <div className="flex justify-between items-start mb-6">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">
+            <div className="flex justify-between items-start mb-4 sm:mb-6 gap-2">
+              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <span className="text-xl sm:text-2xl filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300 shrink-0">
                   {skill.icon}
                 </span>
-                <div>
-                  <h3 className="font-mono text-sm font-bold tracking-wide text-white group-hover:text-signal-yellow transition-colors">
+                <div className="min-w-0">
+                  <h3 className="font-mono text-xs sm:text-sm font-bold tracking-wide text-white group-hover:text-signal-yellow transition-colors truncate">
                     {skill.name}
                   </h3>
-                  <p className="font-sans text-[11px] text-gray-500 mt-1">
+                  <p className="font-sans text-[10px] sm:text-[11px] text-gray-500 mt-0.5 sm:mt-1 truncate">
                     {skill.spec}
                   </p>
                 </div>
               </div>
               
-              <div className="font-mono text-xs font-black text-signal-pink bg-signal-pink/10 px-2 py-1">
+              <div className="font-mono text-[10px] sm:text-xs font-black text-signal-pink bg-signal-pink/10 px-2 py-0.5 sm:py-1 shrink-0">
                 <DecryptedText text={`${skill.level}%`} animateOn="hover" speed={30} />
               </div>
             </div>

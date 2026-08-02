@@ -134,7 +134,7 @@ export default function ProjectCard({ repo }: { repo: GitHubRepo }) {
       <div className="corner-br opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-40" />
 
       {/* Top Media Section */}
-      <div className="relative h-56 w-full overflow-hidden bg-black border-b border-white/10">
+      <div className="relative h-44 sm:h-56 w-full overflow-hidden bg-black border-b border-white/10">
         <div className="absolute inset-0 bg-black/60 group-hover:bg-transparent transition-colors duration-500 z-20 mix-blend-multiply" />
         
         {/* Parallax Image */}
@@ -161,8 +161,8 @@ export default function ProjectCard({ repo }: { repo: GitHubRepo }) {
       </div>
 
       {/* Content Section */}
-      <div ref={contentRef} className="p-6 relative z-40 flex flex-col flex-grow bg-gradient-to-t from-[#020204] to-transparent">
-        <div className="flex items-center justify-between mb-4">
+      <div ref={contentRef} className="p-4 sm:p-6 relative z-40 flex flex-col flex-grow bg-gradient-to-t from-[#020204] to-transparent">
+        <div className="flex items-center justify-between mb-3 sm:mb-4">
           <div className="font-mono text-[10px] text-gray-500 tracking-widest uppercase">
             ID: {repo.id.toString().substring(0, 6)}
           </div>
@@ -171,7 +171,7 @@ export default function ProjectCard({ repo }: { repo: GitHubRepo }) {
           </div>
         </div>
         
-        <h3 className="text-2xl font-black text-white group-hover:text-signal-cyan transition-colors mb-3 font-display uppercase tracking-tighter">
+        <h3 className="text-xl sm:text-2xl font-black text-white group-hover:text-signal-cyan transition-colors mb-2 sm:mb-3 font-display uppercase tracking-tighter break-words">
           <GlitchText text={repo.name.replace(/-/g, ' ')} />
         </h3>
         

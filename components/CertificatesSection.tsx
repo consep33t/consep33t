@@ -79,45 +79,45 @@ export default function CertificatesSection() {
   }, []);
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-28 sm:px-12 relative font-sans" ref={containerRef}>
+    <section className="mx-auto max-w-6xl px-4 sm:px-12 py-14 sm:py-28 relative font-sans overflow-hidden" ref={containerRef}>
       {/* Section Header */}
-      <div className="mb-16 text-right flex flex-col items-end">
+      <div className="mb-10 sm:mb-16 text-left sm:text-right flex flex-col items-start sm:items-end">
         <div className="flex items-center gap-3 font-mono text-xs text-signal-yellow uppercase tracking-widest mb-2">
           <span>// VERIFIED_CREDENTIALS</span>
           <span className="h-2 w-2 rounded-full bg-signal-yellow animate-pulse" />
         </div>
-        <h2 className="font-display text-4xl sm:text-5xl font-black uppercase tracking-widest text-white mb-4">
+        <h2 className="font-display text-2xl sm:text-4xl md:text-5xl font-black uppercase tracking-wider text-white mb-4 break-words">
           <GlitchText text="HONORS_&_ACCREDITATION" />
         </h2>
-        <div className="h-1 w-44 bg-gradient-to-l from-signal-yellow via-signal-pink to-transparent rounded-full" />
+        <div className="h-1 w-32 sm:w-44 bg-gradient-to-r sm:bg-gradient-to-l from-signal-yellow via-signal-pink to-transparent rounded-full" />
       </div>
 
       {/* Credentials Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         {CERTIFICATES.map((cert, idx) => (
           <div 
             key={idx} 
-            className="cert-item glass-panel p-6 sm:p-8 hud-bracket group hover:border-signal-yellow/70 transition-all duration-500 relative overflow-hidden cursor-default shadow-[0_0_20px_rgba(252,238,10,0.04)]"
+            className="cert-item glass-panel p-4 sm:p-8 hud-bracket group hover:border-signal-yellow/70 transition-all duration-500 relative overflow-hidden cursor-default shadow-[0_0_20px_rgba(252,238,10,0.04)]"
           >
             {/* Ambient Hologram Glow */}
             <div className="absolute -top-12 -right-12 w-32 h-32 bg-signal-yellow/10 blur-[40px] group-hover:bg-signal-yellow/20 transition-all duration-500" />
             
             {/* Top Bar */}
-            <div className="flex items-center justify-between font-mono text-xs mb-4 pb-3 border-b border-white/10">
-              <div className="text-signal-yellow font-bold flex items-center gap-2">
+            <div className="flex items-center justify-between font-mono text-xs mb-4 pb-3 border-b border-white/10 gap-2">
+              <div className="text-signal-yellow font-bold flex items-center gap-2 shrink-0">
                 <span>[YEAR: {cert.year}]</span>
               </div>
-              <div className="text-gray-400 bg-black/60 border border-white/10 px-2 py-0.5 text-[11px]">
+              <div className="text-gray-400 bg-black/60 border border-white/10 px-2 py-0.5 text-[10px] sm:text-[11px] truncate max-w-[180px] sm:max-w-none">
                 <DecryptedText text={`ID: ${cert.credentialId}`} animateOn="hover" speed={30} />
               </div>
             </div>
 
             {/* Title & Issuer */}
-            <h3 className="text-xl font-black text-white uppercase tracking-wider mb-2 group-hover:text-signal-yellow transition-colors leading-snug">
+            <h3 className="text-base sm:text-xl font-black text-white uppercase tracking-wider mb-2 group-hover:text-signal-yellow transition-colors leading-snug break-words">
               {cert.title}
             </h3>
 
-            <p className="text-xs text-signal-cyan font-mono mb-4 flex items-center gap-2">
+            <p className="text-xs text-signal-cyan font-mono mb-4 flex items-center gap-2 flex-wrap">
               <span>ISSUER //</span>
               <span className="text-white font-bold">{cert.issuer}</span>
             </p>

@@ -19,23 +19,23 @@ export default async function HomePage() {
       <Hero />
 
       {/* SECTION 01: OPERATOR PROFILE (RIGHT ALIGNED) */}
-      <section className="mx-auto max-w-7xl px-6 py-32 sm:px-12 relative flex justify-end">
-        <div className="absolute top-1/2 left-0 -translate-y-1/2 font-jp text-[150px] md:text-[250px] text-white/[0.02] -z-10 select-none font-black leading-none whitespace-nowrap">
+      <section className="mx-auto max-w-7xl px-4 sm:px-12 py-16 sm:py-32 relative flex justify-end overflow-hidden">
+        <div className="absolute top-1/2 left-0 -translate-y-1/2 font-jp text-[70px] sm:text-[150px] md:text-[250px] text-white/[0.02] -z-10 select-none font-black leading-none whitespace-nowrap pointer-events-none">
           電脳空間
         </div>
         
-        <div className="w-full max-w-3xl border-r-4 border-signal-cyan pr-8 md:pr-12 relative text-right">
-          <div className="absolute -right-[6px] top-0 w-2 h-2 bg-signal-cyan rounded-full animate-pulse shadow-[0_0_10px_#00F0FF]" />
+        <div className="w-full max-w-3xl border-r-2 sm:border-r-4 border-signal-cyan pr-4 sm:pr-8 md:pr-12 relative text-right">
+          <div className="absolute -right-[5px] sm:-right-[6px] top-0 w-2 h-2 bg-signal-cyan rounded-full animate-pulse shadow-[0_0_10px_#00F0FF]" />
           
-          <p className="font-mono text-xs uppercase tracking-widest text-signal-cyan mb-4">
+          <p className="font-mono text-xs uppercase tracking-widest text-signal-cyan mb-3 sm:mb-4">
             <DecryptedText text="// 01 — operator_profile" animateOn="view" speed={40} />
           </p>
           
-          <h2 className="font-display text-4xl md:text-6xl font-black uppercase tracking-tighter text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.2)] mb-8">
+          <h2 className="font-display text-2xl sm:text-4xl md:text-6xl font-black uppercase tracking-tighter text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.2)] mb-4 sm:mb-8 break-words">
             <GlitchText text="FULLSTACK_&_IOT_ENGINEER" />
           </h2>
           
-          <div className="text-lg md:text-xl leading-relaxed text-text-secondary font-sans border border-white/5 bg-white/[0.01] p-8 shadow-inner backdrop-blur-sm rounded-l-2xl">
+          <div className="text-sm sm:text-lg md:text-xl leading-relaxed text-text-secondary font-sans border border-white/5 bg-white/[0.01] p-4 sm:p-8 shadow-inner backdrop-blur-sm rounded-l-xl sm:rounded-l-2xl">
             <SplitText 
               text="Lulusan baru S1 Teknik Informatika (IPK 3.29) Institut Teknologi dan Bisnis Indonesia Medan. Berkomitmen mengembangkan web modern dan solusi Internet of Things (IoT) berbasis data untuk transformasi digital efisien."
               delay={15}
@@ -48,27 +48,27 @@ export default async function HomePage() {
       </section>
 
       {/* MINIGAME SECTION (CENTERED, MASSIVE) */}
-      <section className="mx-auto max-w-7xl px-6 py-24 sm:px-12 relative">
+      <section className="mx-auto max-w-7xl px-4 sm:px-12 py-12 sm:py-24 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-signal-pink/5 to-transparent blur-3xl -z-10" />
-        <div className="border border-signal-pink/20 bg-[#131320]/80 backdrop-blur-md p-12 md:p-24 shadow-[0_0_40px_rgba(255,46,159,0.05)] relative overflow-hidden group text-center rounded-3xl">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-signal-pink/10 blur-[100px] group-hover:bg-signal-pink/20 transition-all duration-1000 -z-10" />
+        <div className="border border-signal-pink/20 bg-[#131320]/80 backdrop-blur-md p-6 sm:p-12 md:p-24 shadow-[0_0_40px_rgba(255,46,159,0.05)] relative overflow-hidden group text-center rounded-2xl sm:rounded-3xl">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-signal-pink/10 blur-[80px] sm:blur-[100px] group-hover:bg-signal-pink/20 transition-all duration-1000 -z-10" />
           
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-signal-pink/10 mb-8 animate-bounce">
-            <span className="text-3xl">💀</span>
+          <div className="inline-flex items-center justify-center w-12 sm:w-16 h-12 sm:h-16 rounded-full bg-signal-pink/10 mb-4 sm:mb-8 animate-bounce">
+            <span className="text-2xl sm:text-3xl">💀</span>
           </div>
           
-          <h2 className="font-display text-4xl md:text-5xl font-black uppercase tracking-tighter text-white mb-6">
+          <h2 className="font-display text-xl sm:text-4xl md:text-5xl font-black uppercase tracking-tighter text-white mb-4 sm:mb-6 break-words">
             <GlitchText text="[UNAUTHORIZED_ACCESS_DETECTED]" />
           </h2>
           
-          <p className="font-mono text-base text-gray-400 mb-10 max-w-xl mx-auto">
+          <p className="font-mono text-xs sm:text-base text-gray-400 mb-6 sm:mb-10 max-w-xl mx-auto">
             Mainframe mendeteksi anomali. Bypass sistem pertahanan untuk mengakses neural records yang tersembunyi.
           </p>
           
           <TransitionLink
             href="/cyber-hack"
             data-cursor="hover"
-            className="inline-block px-12 py-5 bg-signal-pink text-black font-mono text-sm font-bold uppercase tracking-[0.2em] transition-all duration-500 hover:bg-white hover:shadow-[0_0_40px_rgba(255,255,255,0.6)] shadow-[0_0_20px_rgba(255,46,159,0.4)]"
+            className="inline-block px-6 sm:px-12 py-3.5 sm:py-5 bg-signal-pink text-black font-mono text-xs sm:text-sm font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] transition-all duration-500 hover:bg-white hover:shadow-[0_0_40px_rgba(255,255,255,0.6)] shadow-[0_0_20px_rgba(255,46,159,0.4)] max-w-full truncate"
           >
             INITIATE_HACK_SEQUENCE
           </TransitionLink>
@@ -76,21 +76,21 @@ export default async function HomePage() {
       </section>
 
       {/* FEATURED REPOS (LEFT ALIGNED) */}
-      <section className="mx-auto max-w-7xl px-6 py-32 sm:px-12 relative">
-        <div className="mb-16 flex flex-col md:flex-row md:items-end justify-between border-b border-signal-cyan/20 pb-8">
+      <section className="mx-auto max-w-7xl px-4 sm:px-12 py-16 sm:py-32 relative">
+        <div className="mb-10 sm:mb-16 flex flex-col md:flex-row md:items-end justify-between border-b border-signal-cyan/20 pb-6 sm:pb-8">
           <div>
-            <p className="font-mono text-xs uppercase tracking-widest text-signal-cyan flex items-center gap-3 mb-4">
+            <p className="font-mono text-xs uppercase tracking-widest text-signal-cyan flex items-center gap-3 mb-3 sm:mb-4">
               <span className="w-2 h-2 bg-signal-cyan inline-block animate-pulse shadow-[0_0_10px_#00F0FF]" />
               <DecryptedText text="// 02 — featured_repositories" animateOn="view" speed={40} />
             </p>
-            <h2 className="font-display text-5xl md:text-7xl font-black uppercase tracking-tighter text-white">
+            <h2 className="font-display text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter text-white break-words">
               <GlitchText text="ARSENAL_DATA" />
             </h2>
           </div>
           <TransitionLink
             href="/projects"
             data-cursor="hover"
-            className="group relative font-mono text-sm tracking-[0.2em] text-white transition-colors hover:text-signal-cyan mt-8 md:mt-0 inline-flex items-center gap-3 font-bold bg-white/5 px-6 py-3 rounded-full border border-white/10 hover:border-signal-cyan/50"
+            className="group relative font-mono text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] text-white transition-colors hover:text-signal-cyan mt-6 md:mt-0 inline-flex items-center gap-3 font-bold bg-white/5 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full border border-white/10 hover:border-signal-cyan/50 self-start md:self-auto"
           >
             LIHAT_SEMUA 
             <span className="inline-block transition-transform duration-300 group-hover:translate-x-2 group-hover:scale-125 text-signal-cyan">→</span>
