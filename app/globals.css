@@ -1,26 +1,244 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  --color-void: #08080C;
+  --color-surface: #131320;
+  --color-surface-hover: #1c1c2e;
+  --color-signal-pink: #FF2E9F;
+  --color-signal-cyan: #00F0FF;
+  --color-signal-violet: #9D4EDD;
+  --color-signal-yellow: #fcee0a;
+  --color-signal-green: #00ff66;
+  --color-alert-crimson: #FF1744;
+  --color-text-primary: #F0F0F5;
+  --color-text-secondary: #9A9AB3;
+  --color-text-dim: #5c5c75;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-display: var(--font-orbitron), sans-serif;
+  --font-body: var(--font-inter), sans-serif;
+  --font-mono: var(--font-jetbrains-mono), monospace;
+  --font-jp: var(--font-noto-jp), sans-serif;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --animate-scan: scan 3s ease-in-out infinite;
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-laser: laser 2s linear infinite;
+
+  @keyframes scan {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(60vh); }
+    100% { transform: translateY(0); }
+  }
+
+  @keyframes laser {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(200%); }
   }
 }
 
+html {
+  scrollbar-gutter: stable;
+  scroll-behavior: smooth;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-void);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  background-image:
+    linear-gradient(var(--color-surface) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-surface) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* Modern Typography Improvements (per Modern Web Guidance) */
+h1, h2, h3, h4, h5, h6 {
+  text-wrap: balance;
+}
+
+p, li, blockquote {
+  text-wrap: pretty;
+}
+
+::selection {
+  background: var(--color-signal-pink);
+  color: #000;
+}
+
+/* Scrollbar tipis ala HUD Cyberpunk */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #08080C;
+}
+::-webkit-scrollbar-thumb {
+  background: #131320;
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-signal-pink);
+  box-shadow: 0 0 12px var(--color-signal-pink);
+}
+
+/* Utility Classes Rata Kanan (Ultra Quality) */
+.glass-panel {
+  background: rgba(19, 19, 32, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.glass-panel-pink {
+  background: rgba(25, 10, 20, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 46, 159, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(255, 46, 159, 0.12), inset 0 0 0 1px rgba(255, 46, 159, 0.1);
+}
+
+/* Signature HUD Target-Lock Card (from neo-tokyo-design-system.html) */
+.hud-card {
+  position: relative;
+  background: var(--color-surface);
+  padding: 1.75rem;
+  transition: all 0.3s ease;
+}
+
+.corner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.corner-tl {
+  top: -1px;
+  left: -1px;
+  border-top: 2px solid var(--color-signal-cyan);
+  border-left: 2px solid var(--color-signal-cyan);
+}
+
+.corner-tr {
+  top: -1px;
+  right: -1px;
+  border-top: 2px solid var(--color-signal-cyan);
+  border-right: 2px solid var(--color-signal-cyan);
+}
+
+.corner-bl {
+  bottom: -1px;
+  left: -1px;
+  border-bottom: 2px solid var(--color-signal-pink);
+  border-left: 2px solid var(--color-signal-pink);
+}
+
+.corner-br {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 2px solid var(--color-signal-pink);
+  border-right: 2px solid var(--color-signal-pink);
+}
+
+.hud-card:hover .corner-tl,
+.hud-card:hover .corner-tr {
+  box-shadow: 0 0 12px var(--color-signal-cyan);
+  width: 22px;
+  height: 22px;
+}
+
+.hud-card:hover .corner-bl,
+.hud-card:hover .corner-br {
+  box-shadow: 0 0 12px var(--color-signal-pink);
+  width: 22px;
+  height: 22px;
+}
+
+.hud-bracket {
+  position: relative;
+}
+.hud-bracket::before,
+.hud-bracket::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+.hud-bracket::before {
+  top: -1px;
+  left: -1px;
+  border-top: 2px solid var(--color-signal-cyan);
+  border-left: 2px solid var(--color-signal-cyan);
+}
+.hud-bracket::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 2px solid var(--color-signal-pink);
+  border-right: 2px solid var(--color-signal-pink);
+}
+.hud-bracket:hover::before {
+  width: 18px;
+  height: 18px;
+  border-color: var(--color-signal-pink);
+  box-shadow: 0 0 10px var(--color-signal-pink);
+}
+.hud-bracket:hover::after {
+  width: 18px;
+  height: 18px;
+  border-color: var(--color-signal-cyan);
+  box-shadow: 0 0 10px var(--color-signal-cyan);
+}
+
+.glow-cyan {
+  text-shadow: 0 0 14px rgba(0, 240, 255, 0.8), 0 0 28px rgba(0, 240, 255, 0.4);
+}
+.glow-pink {
+  text-shadow: 0 0 14px rgba(255, 46, 159, 0.8), 0 0 28px rgba(255, 46, 159, 0.4);
+}
+.glow-violet {
+  text-shadow: 0 0 14px rgba(157, 78, 221, 0.8), 0 0 28px rgba(157, 78, 221, 0.4);
+}
+.glow-yellow {
+  text-shadow: 0 0 14px rgba(252, 238, 10, 0.8), 0 0 28px rgba(252, 238, 10, 0.4);
+}
+
+.scanline-bg {
+  background: linear-gradient(
+    rgba(19, 19, 32, 0) 50%, 
+    rgba(8, 8, 12, 0.35) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(255, 46, 159, 0.03),
+    rgba(0, 240, 255, 0.02),
+    rgba(157, 78, 221, 0.03)
+  );
+  background-size: 100% 3px, 6px 100%;
+}
+
+/* Progressive Scroll Animation (Modern Web Standard) */
+@supports ((animation-timeline: scroll()) and (animation-range: 0% 100%)) {
+  .scroll-driven-fade {
+    animation: fade-in-scroll linear both;
+    animation-timeline: view();
+    animation-range: entry 20% cover 40%;
+  }
+
+  @keyframes fade-in-scroll {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-driven-fade {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
