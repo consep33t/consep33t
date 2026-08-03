@@ -5,13 +5,12 @@ import {
   useCallback,
   useContext,
   useState,
+  useRef,
   type ComponentProps,
   type ReactNode,
 } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
-import DecryptedText from "./DecryptedText";
-import GlitchText from "./GlitchText";
 
 type GatePhase = "idle" | "closing" | "opening";
 
@@ -24,20 +23,20 @@ const TransitionContext = createContext<TransitionContextValue | null>(null);
 export function useGateTransition() {
   const ctx = useContext(TransitionContext);
   if (!ctx) {
-    throw new Error(
-      "useGateTransition harus dipakai di dalam <PageTransitionProvider>"
-    );
+    throw new Error("useGateTransition harus dipakai di dalam <PageTransitionProvider>");
   }
   return ctx;
 }
 
-const GATE_MS = 600;
-const HOLD_MS = 250;
+const GATE_MS = 550;
+const HOLD_MS = 200;
+
+// Cyberpunk diagonal wipe panels
+const PANEL_COUNT = 5;
 
 export function PageTransitionProvider({ children }: { children: ReactNode }) {
   const [phase, setPhase] = useState<GatePhase>("idle");
   const [targetPath, setTargetPath] = useState("");
-  const pathname = usePathname();
 
   const runTransition = useCallback(
     (action: () => void, targetUrl?: string) => {
@@ -63,38 +62,84 @@ export function PageTransitionProvider({ children }: { children: ReactNode }) {
 
       <AnimatePresence>
         {phase !== "idle" && (
-          <div className="pointer-events-none fixed inset-0 z-[9999] flex flex-col overflow-hidden bg-black/50 backdrop-blur-md">
-            <motion.div
-              className="absolute inset-0 bg-[#020204] border-b-[3px] border-signal-pink shadow-[0_5px_40px_rgba(255,46,159,0.3)] origin-top"
-              initial={{ scaleY: 0 }}
-              animate={{ scaleY: phase === "opening" ? 0 : 1 }}
-              exit={{ scaleY: 0 }}
-              transition={{ duration: GATE_MS / 1000, ease: [0.76, 0, 0.24, 1] }}
-            >
-              {/* CRT Scanline background for transition */}
-              <div className="absolute inset-0 scanline-bg opacity-30" />
-              
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                {phase === "closing" && (
-                  <div className="flex flex-col items-center gap-4 bg-black/80 p-8 rounded-lg backdrop-blur-md border border-signal-pink/30 shadow-[0_0_20px_rgba(255,46,159,0.2)]">
-                    <div className="font-orbitron text-xs md:text-sm text-signal-pink tracking-[0.3em] font-bold">
-                      <DecryptedText text={`INITIALIZING SYSTEM TRANSFER //`} animateOn="view" speed={20} />
-                    </div>
-                    <div className="font-mono text-xs text-signal-cyan">
-                      <DecryptedText text={`TARGET NODE: ${targetPath || pathname}`} animateOn="view" speed={30} />
-                    </div>
-                    <div className="w-64 h-[2px] bg-white/10 relative overflow-hidden mt-4">
-                       <motion.div 
-                         className="absolute top-0 left-0 h-full bg-signal-pink shadow-[0_0_15px_#FF2E9F]"
-                         initial={{ width: "0%" }}
-                         animate={{ width: "100%" }}
-                         transition={{ duration: (GATE_MS + HOLD_MS) / 1000, ease: "linear" }}
-                       />
-                    </div>
+          <div className="pointer-events-none fixed inset-0 z-[9999] overflow-hidden">
+            {/* Multi-panel diagonal reveal — cyberpunk style */}
+            {Array.from({ length: PANEL_COUNT }).map((_, i) => {
+              const colors = [
+                "bg-[#020204]",
+                "bg-[#050510]",
+                "bg-[#020204]",
+                "bg-[#050510]",
+                "bg-[#020204]",
+              ];
+              const delay = i * 0.06;
+
+              return (
+                <motion.div
+                  key={i}
+                  className={`absolute top-0 ${colors[i]}`}
+                  style={{
+                    left: `${(i / PANEL_COUNT) * 100}%`,
+                    width: `${100 / PANEL_COUNT + 2}%`,
+                    height: "100%",
+                    transformOrigin: "top",
+                    clipPath: i % 2 === 0
+                      ? "polygon(0 0, 100% 0, 95% 100%, 0% 100%)"
+                      : "polygon(5% 0, 100% 0, 100% 100%, 0% 100%)",
+                  }}
+                  initial={{ scaleY: 0 }}
+                  animate={{
+                    scaleY: phase === "opening" ? 0 : 1,
+                  }}
+                  exit={{ scaleY: 0 }}
+                  transition={{
+                    duration: GATE_MS / 1000,
+                    delay,
+                    ease: [0.76, 0, 0.24, 1],
+                  }}
+                />
+              );
+            })}
+
+            {/* Center HUD overlay — only during closing phase */}
+            {phase === "closing" && (
+              <motion.div
+                className="absolute inset-0 flex items-center justify-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.15 }}
+              >
+                <div className="flex flex-col items-center gap-3 px-8 py-6 border border-signal-cyan/30 bg-black/60 backdrop-blur-md shadow-[0_0_30px_rgba(0,240,255,0.15)] rounded-sm">
+                  {/* Glitch bars */}
+                  <div className="flex gap-1 mb-1">
+                    {[...Array(6)].map((_, j) => (
+                      <motion.div
+                        key={j}
+                        className="h-5 bg-signal-cyan"
+                        style={{ width: `${Math.random() * 20 + 8}px` }}
+                        animate={{ scaleY: [1, 0.3, 1, 0.6, 1], opacity: [1, 0.5, 1] }}
+                        transition={{ repeat: Infinity, duration: 0.3, delay: j * 0.05 }}
+                      />
+                    ))}
                   </div>
-                )}
-              </div>
-            </motion.div>
+                  <div className="font-mono text-[10px] sm:text-xs text-signal-cyan tracking-[0.35em] uppercase font-bold">
+                    TRANSFERRING NODE
+                  </div>
+                  <div className="font-mono text-[9px] text-signal-pink/70 tracking-widest truncate max-w-[200px]">
+                    {targetPath || "/"}
+                  </div>
+                  {/* Progress */}
+                  <div className="w-48 h-[2px] bg-white/10 overflow-hidden rounded-full mt-1">
+                    <motion.div
+                      className="h-full bg-gradient-to-r from-signal-cyan to-signal-pink shadow-[0_0_10px_#00F0FF]"
+                      initial={{ width: "0%" }}
+                      animate={{ width: "100%" }}
+                      transition={{ duration: (GATE_MS + HOLD_MS) / 1000, ease: "linear" }}
+                    />
+                  </div>
+                </div>
+              </motion.div>
+            )}
           </div>
         )}
       </AnimatePresence>
@@ -110,14 +155,16 @@ export function TransitionLink({
   href,
   onClick,
   children,
+  ref,
   ...rest
-}: TransitionLinkProps) {
+}: TransitionLinkProps & { ref?: React.Ref<HTMLAnchorElement> }) {
   const router = useRouter();
   const { runTransition } = useGateTransition();
 
   return (
     <a
       href={href}
+      ref={ref}
       onClick={(e) => {
         e.preventDefault();
         onClick?.(e);

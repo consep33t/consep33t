@@ -8,19 +8,25 @@ import { ScrollSmoother } from "gsap/ScrollSmoother";
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
 /**
- * Bungkus seluruh {children} di root layout dengan provider ini
- * supaya ScrollSmoother aktif untuk seluruh halaman -- ini yang
- * bikin useParallax() di bawah terasa kenyal, bukan patah-patah.
- * ScrollSmoother butuh dua wrapper DOM dengan id spesifik ini.
+ * SmoothScrollProvider — disables smooth scrolling on touch devices
+ * (mobile) for native-feel performance, keeps it for desktop.
+ * ScrollSmoother adds transform on #smooth-content; Navigation must
+ * remain OUTSIDE this provider to avoid position:fixed offset bugs.
  */
 export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
+    // On touch/mobile devices, skip ScrollSmoother for best perf
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
+    if (isTouch) return;
+
     const smoother = ScrollSmoother.create({
       wrapper: "#smooth-wrapper",
       content: "#smooth-content",
-      smooth: 1.2,
+      smooth: 1.0,          // slightly reduced for snappier feel
       effects: true,
+      normalizeScroll: false, // keep native scroll on mobile
     });
+
     return () => smoother.kill();
   }, []);
 
@@ -32,14 +38,10 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
 }
 
 /**
- * Parallax berbasis scroll dengan GSAP ScrollTrigger.
- *   speed > 1   -> elemen bergerak lebih cepat dari scroll ("dekat")
- *   speed 0-1   -> elemen bergerak lebih lambat ("jauh", cocok bg)
- *   speed < 0   -> elemen bergerak berlawanan arah scroll
- *
- * Contoh pemakaian di Hero:
- *   const bgRef = useParallax<HTMLDivElement>(0.3);
- *   const titleRef = useParallax<HTMLDivElement>(0.8);
+ * Parallax hook — safe on mobile (no-op if ref is null or touch device)
+ *   speed > 1  → moves faster than scroll (foreground)
+ *   speed 0-1  → moves slower (background)
+ *   speed < 0  → moves opposite direction
  */
 export function useParallax<T extends HTMLElement>(speed: number = 0.5) {
   const ref = useRef<T>(null);
@@ -48,18 +50,22 @@ export function useParallax<T extends HTMLElement>(speed: number = 0.5) {
     const el = ref.current;
     if (!el) return;
 
-    let ctx = gsap.context(() => {
+    // Skip on touch devices
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
+    if (isTouch) return;
+
+    const ctx = gsap.context(() => {
       gsap.fromTo(
         el,
-        { y: () => -window.innerHeight * speed * 0.3 },
+        { y: () => -window.innerHeight * speed * 0.25 },
         {
-          y: () => window.innerHeight * speed * 0.3,
+          y: () => window.innerHeight * speed * 0.25,
           ease: "none",
           scrollTrigger: {
             trigger: el,
             start: "top bottom",
             end: "bottom top",
-            scrub: 0.6,
+            scrub: 0.5,
             invalidateOnRefresh: true,
           },
         }

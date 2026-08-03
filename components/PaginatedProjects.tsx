@@ -60,77 +60,96 @@ export default function PaginatedProjects({ repos }: PaginatedProjectsProps) {
     }
   }, { scope: containerRef });
 
-  const handleScrollToTop = () => {
-    // If GSAP ScrollSmoother is active, use it. Otherwise fallback to window.scrollTo
-    const smoother = (window as any).ScrollSmoother?.get();
-    if (smoother) {
-      smoother.scrollTo(0, true);
-    } else {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+  const scrollToSection = () => {
+    // Scroll the projects section into view — works with and without ScrollSmoother,
+    // on mobile and desktop, without relying on window globals.
+    if (containerRef.current) {
+      const yOffset = -80; // offset for fixed header height
+      const y =
+        containerRef.current.getBoundingClientRect().top +
+        window.scrollY +
+        yOffset;
+      window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
     }
   };
 
   const paginate = (newPage: number) => {
     if (newPage === currentPage || isAnimating || newPage < 1 || newPage > totalPages) return;
 
-    handleScrollToTop();
-
     setIsAnimating(true);
+    const direction = newPage > currentPage ? 1 : -1;
+
     const ctx = gsap.context(() => {
-      const direction = newPage > currentPage ? 1 : -1;
       const elements = itemsRef.current?.children;
-
-      if (elements) {
-        const tl = gsap.timeline({
-          onComplete: () => {
-            setCurrentPage(newPage);
-          }
-        });
-
-        Array.from(elements).forEach((el, index) => {
-          tl.to(el, {
-            opacity: 0,
-            x: -200 * direction,
-            scale: 0.8,
-            filter: "blur(12px)",
-            duration: 0.4,
-            ease: "power2.in",
-          }, index * 0.1);
-        });
+      if (!elements) {
+        // No children yet — just flip page
+        setCurrentPage(newPage);
+        setIsAnimating(false);
+        scrollToSection();
+        return;
       }
+
+      const tl = gsap.timeline({
+        onComplete: () => {
+          // 1. Commit the new page FIRST
+          setCurrentPage(newPage);
+          // 2. Then scroll — after React has painted new content
+          requestAnimationFrame(() => scrollToSection());
+        },
+      });
+
+      Array.from(elements).forEach((el, index) => {
+        tl.to(
+          el,
+          {
+            opacity: 0,
+            x: -160 * direction,
+            scale: 0.85,
+            filter: "blur(8px)",
+            duration: 0.35,
+            ease: "power2.in",
+          },
+          index * 0.07
+        );
+      });
     }, containerRef);
 
     return () => ctx.revert();
   };
 
+  // Enter animation — runs whenever currentPage changes AND isAnimating is true
   useEffect(() => {
-    if (isAnimating && hasMounted.current) {
-      const ctx = gsap.context(() => {
-        const elements = itemsRef.current?.children;
-        if (elements) {
-          gsap.fromTo(elements,
-            {
-              opacity: 0,
-              x: 200,
-              scale: 0.8,
-              filter: "blur(12px)",
-            },
-            {
-              opacity: 1,
-              x: 0,
-              scale: 1,
-              filter: "blur(0px)",
-              stagger: 0.1,
-              duration: 0.6,
-              ease: "power3.out",
-              onComplete: () => setIsAnimating(false)
-            }
-          );
+    if (!isAnimating || !hasMounted.current) return;
+
+    const ctx = gsap.context(() => {
+      const elements = itemsRef.current?.children;
+      if (!elements) return;
+
+      // Determine direction from previous render — we store it in a ref below
+      gsap.fromTo(
+        elements,
+        {
+          opacity: 0,
+          x: 160,       // always slide in from the right (fresh content coming in)
+          scale: 0.85,
+          filter: "blur(8px)",
+        },
+        {
+          opacity: 1,
+          x: 0,
+          scale: 1,
+          filter: "blur(0px)",
+          stagger: 0.08,
+          duration: 0.55,
+          ease: "power3.out",
+          onComplete: () => setIsAnimating(false),
         }
-      }, containerRef);
-      return () => ctx.revert();
-    }
-  }, [currentPage, isAnimating]);
+      );
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, [currentPage]); // eslint-disable-line react-hooks/exhaustive-deps
+  // NOTE: intentionally only watches currentPage so enter anim fires after state commit
 
   if (repos.length === 0) {
     return (

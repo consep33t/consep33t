@@ -22,6 +22,8 @@
   --animate-scan: scan 3s ease-in-out infinite;
   --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   --animate-laser: laser 2s linear infinite;
+  --animate-spin-slow: spin-slow 8s linear infinite;
+  --animate-float: float 3s ease-in-out infinite;
 
   @keyframes scan {
     0% { transform: translateY(0); }
@@ -33,6 +35,23 @@
     0% { transform: translateX(-100%); }
     100% { transform: translateX(200%); }
   }
+
+  @keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+  }
+
+  @keyframes glitch-x {
+    0%, 100% { transform: translateX(0); }
+    10% { transform: translateX(-3px); }
+    20% { transform: translateX(3px); }
+    30% { transform: translateX(0); }
+  }
 }
 
 html {
@@ -40,6 +59,7 @@ html {
   scroll-behavior: smooth;
   max-width: 100vw;
   overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -48,10 +68,13 @@ body {
   font-family: var(--font-body);
   max-width: 100vw;
   overflow-x: hidden;
+  overscroll-behavior: none;
   background-image:
     linear-gradient(var(--color-surface) 1px, transparent 1px),
     linear-gradient(90deg, var(--color-surface) 1px, transparent 1px);
   background-size: 48px 48px;
+  /* Performance: avoid layout recalc on fixed elements */
+  transform: translateZ(0);
 }
 
 * {
@@ -253,4 +276,43 @@ p, li, blockquote {
     opacity: 1 !important;
     transform: none !important;
   }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Mobile-first touch improvements */
+@media (max-width: 768px) {
+  /* Ensure buttons are never too small to tap */
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Avoid hover flicker on mobile */
+  @media (hover: none) {
+    .group:hover .group-hover\:opacity-100 {
+      opacity: 0 !important;
+    }
+  }
+}
+
+/* Performance: contain compositing layers for animated elements */
+.will-change-transform {
+  will-change: transform;
+}
+
+/* Spin slow utility */
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+/* Float utility */
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }

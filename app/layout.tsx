@@ -78,8 +78,10 @@ export default function RootLayout({
       className={`${orbitron.variable} ${inter.variable} ${jetbrainsMono.variable} ${notoSansJP.variable}`}
     >
       <body>
+        {/* SplashCursor — WebGL fluid, skip on mobile for perf */}
         <SplashCursor />
         <ClickSpark sparkColor="#FF2E9F" sparkSize={10} sparkRadius={25} sparkCount={12} duration={600}>
+          {/* Custom cursor only shows on pointer:fine (mouse) devices via CSS in CustomCursor */}
           <CustomCursor />
           <WelcomeLoader />
           <PageTransitionProvider>
