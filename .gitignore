@@ -12,7 +12,9 @@
 
 # testing
 /coverage
-
+Claude.md
+CHANGELOG.md
+AGENTS.md
 # next.js
 /.next/
 /out/
