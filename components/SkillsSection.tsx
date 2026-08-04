@@ -82,7 +82,7 @@ export default function SkillsSection() {
           <span className="h-2 w-2 rounded-full bg-signal-pink animate-pulse shadow-[0_0_10px_#FF2E9F]" />
           <span>// NEURAL_AUGMENTATIONS</span>
         </div>
-        <h2 className="font-display text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter text-white mb-4 sm:mb-6 break-words">
+        <h2 className="font-display text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter text-white mb-4 sm:mb-6 break-words breathe-text">
           <GlitchText text="SYSTEM" />
           <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-signal-pink to-signal-yellow">

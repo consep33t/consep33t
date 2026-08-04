@@ -41,7 +41,7 @@ export default function HUDLayout({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Main Content Area */}
-        <main className="relative z-10 pt-24 pb-20 px-6 sm:px-12 max-w-7xl mx-auto">
+        <main id="main-content" className="relative z-10 pt-24 pb-20 px-6 sm:px-12 max-w-7xl mx-auto">
           {children}
         </main>
 

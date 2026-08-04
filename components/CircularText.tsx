@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { motion, useAnimationControls } from 'framer-motion';
+import React, { useEffect, useRef } from 'react';
+import gsap from 'gsap';
 
 interface CircularTextProps {
   text: string;
@@ -14,55 +14,68 @@ export default function CircularText({
   text,
   spinDuration = 20,
   className = "",
-  onHover = "speedUp"
+  onHover = "speedUp",
 }: CircularTextProps) {
-  const [isHovered, setIsHovered] = useState(false);
-  const controls = useAnimationControls();
-  
+  const containerRef = useRef<HTMLDivElement>(null);
+  const tweenRef = useRef<gsap.core.Tween | null>(null);
+
   const letters = text.split("");
   const degPerLetter = 360 / letters.length;
 
   useEffect(() => {
-    let currentDuration = spinDuration;
-    if (isHovered) {
-      if (onHover === "speedUp") currentDuration = spinDuration / 4;
-      if (onHover === "slowDown") currentDuration = spinDuration * 4;
-      if (onHover === "pause") currentDuration = 999999;
-    }
+    const el = containerRef.current;
+    if (!el) return;
 
-    controls.start({
-      rotate: 360,
-      transition: {
-        repeat: Infinity,
-        ease: "linear",
-        duration: currentDuration,
-      }
+    // Start infinite rotation
+    tweenRef.current = gsap.to(el, {
+      rotation: 360,
+      duration: spinDuration,
+      ease: "none",
+      repeat: -1,
     });
-  }, [isHovered, spinDuration, onHover, controls]);
+
+    const handleEnter = () => {
+      if (!tweenRef.current) return;
+      if (onHover === "speedUp") tweenRef.current.timeScale(4);
+      else if (onHover === "slowDown") tweenRef.current.timeScale(0.25);
+      else if (onHover === "pause") tweenRef.current.pause();
+    };
+
+    const handleLeave = () => {
+      if (!tweenRef.current) return;
+      tweenRef.current.resume();
+      tweenRef.current.timeScale(1);
+    };
+
+    el.addEventListener("mouseenter", handleEnter);
+    el.addEventListener("mouseleave", handleLeave);
+
+    return () => {
+      el.removeEventListener("mouseenter", handleEnter);
+      el.removeEventListener("mouseleave", handleLeave);
+      tweenRef.current?.kill();
+    };
+  }, [spinDuration, onHover]);
 
   return (
-    <motion.div 
+    <div
+      ref={containerRef}
       className={`relative rounded-full flex items-center justify-center ${className}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      animate={controls}
       style={{ transformOrigin: "center center" }}
     >
       <div className="absolute inset-0 w-full h-full rounded-full" />
-      {letters.map((letter, i) => {
-        return (
-          <div
-            key={i}
-            className="absolute left-1/2 top-0 origin-bottom"
-            style={{
-              height: "50%",
-              transform: `translateX(-50%) rotate(${i * degPerLetter}deg)`,
-            }}
-          >
-            {letter}
-          </div>
-        );
-      })}
-    </motion.div>
+      {letters.map((letter, i) => (
+        <div
+          key={i}
+          className="absolute left-1/2 top-0 origin-bottom"
+          style={{
+            height: "50%",
+            transform: `translateX(-50%) rotate(${i * degPerLetter}deg)`,
+          }}
+        >
+          {letter}
+        </div>
+      ))}
+    </div>
   );
 }

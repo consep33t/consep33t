@@ -77,6 +77,50 @@ body {
   transform: translateZ(0);
 }
 
+/* SVG Grain/Noise overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/></filter><rect width='300' height='300' filter='url(%23n)' opacity='1'/></svg>");
+  background-size: 200px 200px;
+  mix-blend-mode: overlay;
+}
+
+/* Variable font breathe animation */
+.breathe-text {
+  animation: font-breathe 4s ease-in-out infinite;
+}
+
+@keyframes font-breathe {
+  0%, 100% { font-variation-settings: 'wght' 700; }
+  50%       { font-variation-settings: 'wght' 900; }
+}
+
+/* Skip-to-content accessibility link */
+.skip-link {
+  position: absolute;
+  top: -60px;
+  left: 1rem;
+  background: var(--color-signal-pink);
+  color: #000;
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+  border: 1px solid var(--color-signal-cyan);
+  box-shadow: 0 0 15px rgba(255, 46, 159, 0.4);
+  z-index: 10000;
+  transition: top 0.2s ease-in-out;
+  text-decoration: none;
+}
+.skip-link:focus {
+  top: 1rem;
+  outline: none;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -116,6 +160,48 @@ p, li, blockquote {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-signal-pink);
   box-shadow: 0 0 12px var(--color-signal-pink);
+}
+
+/* =============================================================
+   PERFORMANCE: content-visibility for off-screen sections
+   ============================================================= */
+.cv-auto {
+  content-visibility: auto;
+  /* Rough intrinsic size — prevents CLS when browser skips layout */
+  contain-intrinsic-size: auto 600px;
+}
+
+/* =============================================================
+   ACCESSIBILITY: Respect prefers-reduced-motion
+   ============================================================= */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Keep opacity so content is still visible */
+  .breathe-text {
+    animation: none !important;
+  }
+}
+
+/* =============================================================
+   ACCESSIBILITY: Focus indicators
+   ============================================================= */
+:focus-visible {
+  outline: 2px solid var(--color-signal-cyan);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Suppress focus ring for mouse users, keep it for keyboard */
+:focus:not(:focus-visible) {
+  outline: none;
 }
 
 /* Utility Classes Rata Kanan (Ultra Quality) */
@@ -315,4 +401,17 @@ p, li, blockquote {
 /* Float utility */
 .animate-float {
   animation: float 3s ease-in-out infinite;
+}
+
+/* Shimmer loading animation for skeletons */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+.animate-shimmer {
+  animation: shimmer 1.8s infinite linear;
 }

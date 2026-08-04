@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
 import DecryptedText from "@/components/DecryptedText";
 import SplitText from "@/components/SplitText";
 import GlitchText from "@/components/GlitchText";
@@ -54,7 +53,7 @@ export default function CyberHackMinigame() {
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value.toUpperCase();
     setInput(val);
-    
+
     if (val === TARGET_CODES[level]) {
       const addedScore = (level + 1) * 100 + timeLeft * 10;
       const newScore = score + addedScore;
@@ -76,8 +75,8 @@ export default function CyberHackMinigame() {
 
   return (
     <div className="relative min-h-screen w-full bg-[#030305] text-white font-mono p-6 sm:p-12 overflow-hidden flex flex-col items-center justify-center">
-      {/* Background Cyber Matrix Grid */}
-      <motion.div
+      {/* Background Cyber Matrix Grid — pure CSS, no Framer */}
+      <div
         className="pointer-events-none absolute inset-0 z-0 opacity-20"
         style={{
           backgroundImage:
@@ -98,7 +97,7 @@ export default function CyberHackMinigame() {
             <span className="w-2.5 h-2.5 rounded-full bg-signal-cyan animate-pulse" />
             <SplitText text="CYBER_HACK_PROTOCOL_v3.0" className="text-signal-cyan text-lg sm:text-xl font-bold tracking-widest" />
           </div>
-          
+
           <div className="flex items-center gap-4 text-xs">
             <span className="text-gray-400">HIGH_SCORE: <span className="text-signal-yellow font-bold">{highScore}</span></span>
             <span className="text-signal-pink font-bold bg-signal-pink/10 border border-signal-pink/30 px-2 py-0.5 animate-pulse">
@@ -109,21 +108,22 @@ export default function CyberHackMinigame() {
 
         {/* State 1: IDLE */}
         {status === "IDLE" && (
-          <div className="flex flex-col items-center gap-8 py-10">
+          <div className="flex flex-col items-center gap-8 py-10 animate-fade-in">
             <div className="text-center space-y-2">
               <h2 className="text-2xl font-black text-white tracking-widest">
                 <GlitchText text="SYSTEM_ENCRYPTED" />
               </h2>
-              <DecryptedText 
+              <DecryptedText
                 text="Ketik kode override dengan cepat sebelum sistem mendeteksi penyusupan."
                 className="text-gray-400 text-sm max-w-md"
                 speed={30}
               />
             </div>
 
-            <button 
+            <button
               onClick={startGame}
-              className="px-10 py-4 bg-signal-cyan text-black font-bold hover:bg-white transition-all uppercase tracking-widest cursor-pointer shadow-[0_0_20px_#00f0ff]"
+              className="px-10 py-4 bg-signal-cyan text-black font-bold hover:bg-white transition-all duration-300 uppercase tracking-widest cursor-pointer shadow-[0_0_20px_#00f0ff] active:scale-95"
+              aria-label="Start the cyber hack game"
             >
               INITIALIZE_OVERRIDE ⚡
             </button>
@@ -152,25 +152,24 @@ export default function CyberHackMinigame() {
                 <span>// ENTER_MATCHING_CODE</span>
                 <span>SCORE: {score}</span>
               </label>
-              <input 
+              <input
                 ref={inputRef}
-                type="text" 
+                type="text"
                 value={input}
                 onChange={handleInput}
-                className="w-full bg-black/60 border-2 border-signal-cyan p-3 text-2xl text-white outline-none focus:border-signal-yellow focus:shadow-[0_0_20px_#fcee0a] uppercase tracking-widest font-bold"
+                className="w-full bg-black/60 border-2 border-signal-cyan p-3 text-2xl text-white outline-none focus:border-signal-yellow focus:shadow-[0_0_20px_#fcee0a] uppercase tracking-widest font-bold transition-all duration-200"
                 placeholder="TYPE HERE..."
                 autoFocus
+                aria-label="Type the target code here"
               />
             </div>
-            
-            {/* Progress Bar */}
+
+            {/* Progress Bar — CSS width transition instead of Framer */}
             <div className="space-y-1">
               <div className="h-3 w-full bg-black/80 border border-white/10 overflow-hidden">
-                <motion.div 
-                  className="h-full bg-gradient-to-r from-signal-cyan via-signal-yellow to-signal-pink"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${((level + 1) / TARGET_CODES.length) * 100}%` }}
-                  transition={{ duration: 0.3 }}
+                <div
+                  className="h-full bg-gradient-to-r from-signal-cyan via-signal-yellow to-signal-pink transition-all duration-300 ease-out"
+                  style={{ width: `${((level + 1) / TARGET_CODES.length) * 100}%` }}
                 />
               </div>
               <div className="text-[11px] flex justify-between text-gray-500 font-mono">
@@ -183,50 +182,44 @@ export default function CyberHackMinigame() {
 
         {/* State 3: SUCCESS */}
         {status === "SUCCESS" && (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col items-center gap-6 py-8 text-center"
-          >
+          <div className="flex flex-col items-center gap-6 py-8 text-center animate-fade-in">
             <div className="text-3xl sm:text-4xl font-black text-signal-yellow drop-shadow-[0_0_20px_#fcee0a]">
               MAINFRAME_BYPASSED
             </div>
             <DecryptedText text={`SISTEM BERHASIL DIRETAS! SCORE AKHIR: ${score}`} className="text-gray-300 font-bold" />
 
             <div className="flex flex-wrap justify-center gap-4 mt-4">
-              <button 
-                onClick={startGame} 
-                className="px-6 py-3 border border-signal-yellow text-signal-yellow hover:bg-signal-yellow hover:text-black font-bold transition-all uppercase tracking-wider cursor-pointer"
+              <button
+                onClick={startGame}
+                className="px-6 py-3 border border-signal-yellow text-signal-yellow hover:bg-signal-yellow hover:text-black font-bold transition-all duration-300 uppercase tracking-wider cursor-pointer active:scale-95"
+                aria-label="Restart the game"
               >
                 REBOOT_HACK ↻
               </button>
               <Link href="/">
-                <button className="px-6 py-3 border border-white/20 text-white hover:bg-white hover:text-black font-bold transition-all uppercase tracking-wider cursor-pointer">
+                <button className="px-6 py-3 border border-white/20 text-white hover:bg-white hover:text-black font-bold transition-all duration-300 uppercase tracking-wider cursor-pointer active:scale-95">
                   RETURN_TO_BASE
                 </button>
               </Link>
             </div>
-          </motion.div>
+          </div>
         )}
 
         {/* State 4: FAILED */}
         {status === "FAILED" && (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col items-center gap-6 py-8 text-center"
-          >
+          <div className="flex flex-col items-center gap-6 py-8 text-center animate-fade-in">
             <div className="text-3xl sm:text-4xl font-black text-signal-pink drop-shadow-[0_0_20px_rgba(255,0,60,0.8)]">
               SYSTEM_TRACE_LOCK
             </div>
             <DecryptedText text="WAKTU HABIS. SIGNAL TERLAJU DAN DIPUTUSKAN OLEH MAINFRAME." className="text-gray-400 text-sm" />
-            <button 
+            <button
               onClick={startGame}
-              className="mt-2 px-8 py-3 bg-signal-pink text-black font-bold hover:bg-white transition-all uppercase tracking-widest cursor-pointer shadow-[0_0_20px_#ff003c]"
+              className="mt-2 px-8 py-3 bg-signal-pink text-black font-bold hover:bg-white transition-all duration-300 uppercase tracking-widest cursor-pointer shadow-[0_0_20px_#ff003c] active:scale-95"
+              aria-label="Retry the game"
             >
               RETRY_OVERRIDE ⚡
             </button>
-          </motion.div>
+          </div>
         )}
       </div>
     </div>

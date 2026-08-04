@@ -15,11 +15,11 @@ export default async function HomePage() {
   const featured = repos.slice(0, 3);
 
   return (
-    <main className="bg-[#08080C] overflow-hidden">
+    <main id="main-content" className="bg-[#08080C] overflow-hidden">
       <Hero />
 
       {/* SECTION 01: OPERATOR PROFILE (RIGHT ALIGNED) */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-12 py-16 sm:py-32 relative flex justify-end overflow-hidden">
+      <section className="mx-auto max-w-7xl px-4 sm:px-12 py-16 sm:py-32 relative flex justify-end overflow-hidden scroll-driven-fade">
         <div className="absolute top-1/2 left-0 -translate-y-1/2 font-jp text-[70px] sm:text-[150px] md:text-[250px] text-white/[0.02] -z-10 select-none font-black leading-none whitespace-nowrap pointer-events-none">
           電脳空間
         </div>
@@ -31,7 +31,7 @@ export default async function HomePage() {
             <DecryptedText text="// 01 — operator_profile" animateOn="view" speed={40} />
           </p>
           
-          <h2 className="font-display text-2xl sm:text-4xl md:text-6xl font-black uppercase tracking-tighter text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.2)] mb-4 sm:mb-8 break-words">
+          <h2 className="font-display text-2xl sm:text-4xl md:text-6xl font-black uppercase tracking-tighter text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.2)] mb-4 sm:mb-8 break-words breathe-text">
             <GlitchText text="FULLSTACK_&_IOT_ENGINEER" />
           </h2>
           
@@ -48,7 +48,7 @@ export default async function HomePage() {
       </section>
 
       {/* MINIGAME SECTION (CENTERED, MASSIVE) */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-12 py-12 sm:py-24 relative">
+      <section className="mx-auto max-w-7xl px-4 sm:px-12 py-12 sm:py-24 relative scroll-driven-fade">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-signal-pink/5 to-transparent blur-3xl -z-10" />
         <div className="border border-signal-pink/20 bg-[#131320]/80 backdrop-blur-md p-6 sm:p-12 md:p-24 shadow-[0_0_40px_rgba(255,46,159,0.05)] relative overflow-hidden group text-center rounded-2xl sm:rounded-3xl">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-signal-pink/10 blur-[80px] sm:blur-[100px] group-hover:bg-signal-pink/20 transition-all duration-1000 -z-10" />
@@ -57,7 +57,7 @@ export default async function HomePage() {
             <span className="text-2xl sm:text-3xl">💀</span>
           </div>
           
-          <h2 className="font-display text-xl sm:text-4xl md:text-5xl font-black uppercase tracking-tighter text-white mb-4 sm:mb-6 break-words">
+          <h2 className="font-display text-xl sm:text-4xl md:text-5xl font-black uppercase tracking-tighter text-white mb-4 sm:mb-6 break-words breathe-text">
             <GlitchText text="[UNAUTHORIZED_ACCESS_DETECTED]" />
           </h2>
           
@@ -76,14 +76,14 @@ export default async function HomePage() {
       </section>
 
       {/* FEATURED REPOS (LEFT ALIGNED) */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-12 py-16 sm:py-32 relative">
+      <section className="mx-auto max-w-7xl px-4 sm:px-12 py-16 sm:py-32 relative scroll-driven-fade">
         <div className="mb-10 sm:mb-16 flex flex-col md:flex-row md:items-end justify-between border-b border-signal-cyan/20 pb-6 sm:pb-8">
           <div>
             <p className="font-mono text-xs uppercase tracking-widest text-signal-cyan flex items-center gap-3 mb-3 sm:mb-4">
               <span className="w-2 h-2 bg-signal-cyan inline-block animate-pulse shadow-[0_0_10px_#00F0FF]" />
               <DecryptedText text="// 02 — featured_repositories" animateOn="view" speed={40} />
             </p>
-            <h2 className="font-display text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter text-white break-words">
+            <h2 className="font-display text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter text-white break-words breathe-text">
               <GlitchText text="ARSENAL_DATA" />
             </h2>
           </div>
@@ -113,10 +113,10 @@ export default async function HomePage() {
       </section>
 
       {/* OTHER SECTIONS */}
-      <ExperienceSection />
-      <SkillsSection />
-      <CertificatesSection />
-      <ContactSection />
+      <div className="scroll-driven-fade"><ExperienceSection /></div>
+      <div className="scroll-driven-fade"><SkillsSection /></div>
+      <div className="scroll-driven-fade"><CertificatesSection /></div>
+      <div className="scroll-driven-fade"><ContactSection /></div>
     </main>
   );
 }

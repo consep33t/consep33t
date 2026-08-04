@@ -56,7 +56,7 @@ export default function ContactSection() {
           <span className="h-2 w-2 rounded-full bg-signal-pink animate-pulse" />
           <span>// COMMS_LINK</span>
         </div>
-        <h2 className="font-display text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter text-white break-words">
+        <h2 className="font-display text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter text-white break-words breathe-text">
           <GlitchText text="INITIATE_CONTACT" />
         </h2>
       </div>

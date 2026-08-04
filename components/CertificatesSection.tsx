@@ -86,7 +86,7 @@ export default function CertificatesSection() {
           <span>// VERIFIED_CREDENTIALS</span>
           <span className="h-2 w-2 rounded-full bg-signal-yellow animate-pulse" />
         </div>
-        <h2 className="font-display text-2xl sm:text-4xl md:text-5xl font-black uppercase tracking-wider text-white mb-4 break-words">
+        <h2 className="font-display text-2xl sm:text-4xl md:text-5xl font-black uppercase tracking-wider text-white mb-4 break-words breathe-text">
           <GlitchText text="HONORS_&_ACCREDITATION" />
         </h2>
         <div className="h-1 w-32 sm:w-44 bg-gradient-to-r sm:bg-gradient-to-l from-signal-yellow via-signal-pink to-transparent rounded-full" />

@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { motion } from "framer-motion";
 
 /**
- * DecryptedText Effect (ReactBits Style)
+ * DecryptedText Effect (ReactBits Style) — Zero framer-motion dependency
  */
 
 interface DecryptedTextProps {
@@ -49,32 +48,36 @@ export default function DecryptedText({
 
     intervalRef.current = setInterval(() => {
       setDisplayText((currentText) => {
+        void currentText; // suppress unused warning — we use `text` from closure
         const textArr = text.split("");
-        
-        return textArr.map((char, index) => {
-          // Determine if this character should be revealed
-          let shouldReveal = false;
-          
-          if (sequential) {
-            if (revealDirection === "start") {
-              shouldReveal = index < Math.floor(iteration);
-            } else if (revealDirection === "end") {
-              shouldReveal = index >= text.length - Math.floor(iteration);
+
+        return textArr
+          .map((char, index) => {
+            let shouldReveal = false;
+
+            if (sequential) {
+              if (revealDirection === "start") {
+                shouldReveal = index < Math.floor(iteration);
+              } else if (revealDirection === "end") {
+                shouldReveal = index >= text.length - Math.floor(iteration);
+              } else {
+                const middle = Math.floor(text.length / 2);
+                shouldReveal =
+                  Math.abs(index - middle) < Math.floor(iteration) / 2;
+              }
             } else {
-              // center
-              const middle = Math.floor(text.length / 2);
-              shouldReveal = Math.abs(index - middle) < Math.floor(iteration) / 2;
+              shouldReveal = iteration >= maxIterations;
             }
-          } else {
-            shouldReveal = iteration >= maxIterations;
-          }
 
-          if (shouldReveal) return text[index];
-          if (char === " ") return " ";
+            if (shouldReveal) return text[index];
+            if (char === " ") return " ";
 
-          const charPool = useOriginalCharsOnly ? text.replace(/\s/g, '') : characters;
-          return charPool[Math.floor(Math.random() * charPool.length)] || char;
-        }).join("");
+            const charPool = useOriginalCharsOnly
+              ? text.replace(/\s/g, "")
+              : characters;
+            return charPool[Math.floor(Math.random() * charPool.length)] || char;
+          })
+          .join("");
       });
 
       if (iteration >= (sequential ? text.length : maxIterations)) {
@@ -82,7 +85,7 @@ export default function DecryptedText({
         setDisplayText(text);
       }
 
-      iteration += sequential ? (text.length / maxIterations) : 1;
+      iteration += sequential ? text.length / maxIterations : 1;
     }, speed);
   };
 
@@ -94,7 +97,6 @@ export default function DecryptedText({
     } else if (animateOn === "hover" && isHovering) {
       shouldAnimate = true;
     } else if (animateOn === "view" && !hasAnimated) {
-      // For view, we'll just run it once. In a real app we'd use IntersectionObserver
       shouldAnimate = true;
     }
 
@@ -106,13 +108,14 @@ export default function DecryptedText({
     }
 
     return () => clearInterval(intervalRef.current!);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [text, speed, maxIterations, characters, animateOn, isHovering, hasAnimated, sequential, revealDirection, useOriginalCharsOnly]);
 
   useEffect(() => {
     if (animateOn === "hover" && parentRef?.current) {
       const handleMouseEnter = () => setIsHovering(true);
       const handleMouseLeave = () => setIsHovering(false);
-      
+
       const el = parentRef.current;
       el.addEventListener("mouseenter", handleMouseEnter);
       el.addEventListener("mouseleave", handleMouseLeave);
@@ -133,7 +136,7 @@ export default function DecryptedText({
   };
 
   return (
-    <motion.span
+    <span
       className={className}
       onClick={handleClick}
       onMouseEnter={() => {
@@ -144,6 +147,6 @@ export default function DecryptedText({
       }}
     >
       {displayText}
-    </motion.span>
+    </span>
   );
 }

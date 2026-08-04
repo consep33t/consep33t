@@ -2,7 +2,6 @@
 
 import { useRef, useEffect } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import DecryptedText from "./DecryptedText";
 import GlitchText from "./GlitchText";
 import CircularText from "./CircularText";
@@ -11,6 +10,9 @@ import NeonKanji from "./NeonKanji";
 import Triangulation from "./Triangulation";
 import { TransitionLink } from "./PageTransition";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const QUICK_STATS = [
   { label: "DEGREE", value: "S1 INF", color: "text-signal-cyan" },
@@ -24,16 +26,117 @@ export default function Hero() {
   const btnPrimaryRef = useRef<HTMLAnchorElement>(null);
   const btnSecondaryRef = useRef<HTMLAnchorElement>(null);
   const orbRef = useRef<HTMLDivElement>(null);
+  const bgGridRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const scrollIndicatorRef = useRef<HTMLDivElement>(null);
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
+  // Parallax scroll via GSAP ScrollTrigger (replaces framer useScroll + useTransform)
+  useEffect(() => {
+    const container = containerRef.current;
+    const bgGrid = bgGridRef.current;
+    const content = contentRef.current;
+    if (!container || !bgGrid || !content) return;
 
-  const smoothScroll = useSpring(scrollYProgress, { stiffness: 40, damping: 20 });
-  const yBg = useTransform(smoothScroll, [0, 1], ["0%", "15%"]);
-  const yText = useTransform(smoothScroll, [0, 1], ["0%", "35%"]);
-  const opacityText = useTransform(smoothScroll, [0, 0.75], [1, 0]);
+    const ctx = gsap.context(() => {
+      // Background grid parallax (subtle y shift)
+      gsap.to(bgGrid, {
+        yPercent: 15,
+        ease: "none",
+        scrollTrigger: {
+          trigger: container,
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+
+      // Content parallax + fade out
+      gsap.to(content, {
+        yPercent: 35,
+        opacity: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: container,
+          start: "top top",
+          end: "75% top",
+          scrub: true,
+        },
+      });
+    }, container);
+
+    return () => ctx.revert();
+  }, []);
+
+  // Scroll indicator bounce (replaces framer animate y:[0,-8,0])
+  useEffect(() => {
+    const el = scrollIndicatorRef.current;
+    if (!el) return;
+
+    const tween = gsap.to(el, {
+      y: -8,
+      duration: 1.1,
+      ease: "sine.inOut",
+      repeat: -1,
+      yoyo: true,
+    });
+
+    return () => { tween.kill(); };
+  }, []);
+
+  // Hero entrance animations (replaces framer initial/animate on motion.div)
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) return;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+      // Status pill
+      tl.fromTo(
+        ".hero-status-pill",
+        { opacity: 0, x: 40 },
+        { opacity: 1, x: 0, duration: 0.7 },
+        0.2
+      );
+
+      // Title
+      tl.fromTo(
+        ".hero-title-wrap",
+        { opacity: 0, filter: "blur(20px)" },
+        { opacity: 1, filter: "blur(0px)", duration: 1.2 },
+        0.3
+      );
+
+      // Bio card
+      tl.fromTo(
+        ".hero-bio-card",
+        { opacity: 0, x: 50 },
+        { opacity: 1, x: 0, duration: 0.8 },
+        0.7
+      );
+
+      // CTA buttons
+      tl.fromTo(
+        ".hero-cta-row",
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.6 },
+        0.9
+      );
+
+      // Stats
+      tl.fromTo(
+        ".hero-stats-row",
+        { opacity: 0 },
+        { opacity: 1, duration: 0.8 },
+        1.1
+      );
+    }, container);
+
+    return () => ctx.revert();
+  }, []);
 
   // Magnetic button effect (desktop only)
   useEffect(() => {
@@ -93,14 +196,16 @@ export default function Hero() {
     <section
       ref={containerRef}
       className="relative flex min-h-[100dvh] w-full flex-col items-end justify-center overflow-hidden px-4 sm:px-12 pt-24 sm:pt-28 pb-16 sm:pb-20 bg-[#08080C] font-sans text-right"
+      aria-label="Hero section"
     >
       {/* Background Triangulation & Grid */}
       <Triangulation />
 
-      <motion.div
+      {/* Parallax grid bg */}
+      <div
+        ref={bgGridRef}
         className="pointer-events-none absolute inset-0 z-0 opacity-20"
         style={{
-          y: yBg,
           backgroundImage:
             "linear-gradient(rgba(0, 240, 255, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 240, 255, 0.15) 1px, transparent 1px)",
           backgroundSize: "64px 64px",
@@ -124,31 +229,22 @@ export default function Hero() {
         />
       </div>
 
-      <motion.div
-        style={{ y: yText, opacity: opacityText }}
+      {/* All text content — GSAP entrance via class targets */}
+      <div
+        ref={contentRef}
         className="relative z-10 flex w-full max-w-5xl flex-col items-end"
       >
         {/* Status Pill */}
-        <motion.div
-          initial={{ opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="mb-5 sm:mb-8 inline-flex items-center gap-2 sm:gap-3 rounded-full border border-signal-cyan/30 bg-signal-cyan/5 px-3 sm:px-6 py-1.5 sm:py-2 font-mono text-[9px] sm:text-xs uppercase tracking-[0.12em] sm:tracking-[0.25em] text-signal-cyan shadow-[0_0_15px_rgba(0,240,255,0.1)] max-w-[90vw] overflow-hidden"
-        >
+        <div className="hero-status-pill mb-5 sm:mb-8 inline-flex items-center gap-2 sm:gap-3 rounded-full border border-signal-cyan/30 bg-signal-cyan/5 px-3 sm:px-6 py-1.5 sm:py-2 font-mono text-[9px] sm:text-xs uppercase tracking-[0.12em] sm:tracking-[0.25em] text-signal-cyan shadow-[0_0_15px_rgba(0,240,255,0.1)] max-w-[90vw] overflow-hidden">
           <span className="truncate">
             <DecryptedText text="sys.override // OPERATOR: AGENG PRAYOGA" animateOn="view" speed={30} maxIterations={10} />
           </span>
           <span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-signal-cyan shadow-[0_0_10px_#00f0ff]" />
-        </motion.div>
+        </div>
 
         {/* Title */}
-        <motion.div
-          className="mb-4 sm:mb-6 relative w-full"
-          initial={{ opacity: 0, filter: "blur(20px)" }}
-          animate={{ opacity: 1, filter: "blur(0px)" }}
-          transition={{ duration: 1.2, delay: 0.3 }}
-        >
-          <h1 className="font-display text-[2.8rem] leading-[0.9] sm:text-7xl lg:text-[9.5rem] font-black tracking-tighter text-white drop-shadow-[0_0_40px_rgba(0,240,255,0.3)] break-words">
+        <div className="hero-title-wrap mb-4 sm:mb-6 relative w-full">
+          <h1 className="font-display text-[2.8rem] leading-[0.9] sm:text-7xl lg:text-[9.5rem] font-black tracking-tighter text-white drop-shadow-[0_0_40px_rgba(0,240,255,0.3)] break-words breathe-text">
             <span className="block text-right hover:text-signal-pink transition-colors duration-500">AGENG</span>
             <span className="block text-right bg-gradient-to-l from-signal-cyan via-signal-violet to-signal-pink bg-clip-text text-transparent pb-1 sm:pb-2">
               PRAYOGA
@@ -163,15 +259,10 @@ export default function Hero() {
               onHover="speedUp"
             />
           </div>
-        </motion.div>
+        </div>
 
         {/* Bio Card */}
-        <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.7, duration: 0.8 }}
-          className="mb-7 sm:mb-10 w-full max-w-2xl border-r-2 sm:border-r-4 border-signal-pink bg-black/40 p-4 sm:p-8 shadow-[0_0_40px_rgba(255,46,159,0.15)] backdrop-blur-md relative overflow-hidden group rounded-l-xl sm:rounded-l-2xl"
-        >
+        <div className="hero-bio-card mb-7 sm:mb-10 w-full max-w-2xl border-r-2 sm:border-r-4 border-signal-pink bg-black/40 p-4 sm:p-8 shadow-[0_0_40px_rgba(255,46,159,0.15)] backdrop-blur-md relative overflow-hidden group rounded-l-xl sm:rounded-l-2xl">
           <div className="absolute top-0 left-0 w-40 h-40 bg-signal-pink/10 blur-[50px] group-hover:bg-signal-pink/25 transition-all duration-700" />
           {/* Top scan line on hover */}
           <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-signal-pink to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -199,21 +290,25 @@ export default function Hero() {
             Lulusan S1 Teknik Informatika ITBI Medan. Pengembang software{" "}
             <strong className="text-white">Full-Stack & IoT</strong> berpengalaman merancang sistem otonom cerdas, arsitektur backend scalable, serta aplikasi web & mobile terintegrasi Kecerdasan Buatan.
           </p>
-        </motion.div>
 
-        {/* CTA Buttons — mobile-first fixed layout, no overlap */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9, duration: 0.6 }}
-          className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 sm:gap-5 w-full"
-        >
+          {/* Subtitle tag */}
+          <div className="mt-4 flex justify-end">
+            <SplitText
+              text="// SYSTEM_ARCHITECT // NEURAL_LINK_ENABLED"
+              className="font-mono text-[8px] sm:text-[10px] text-gray-600 tracking-widest"
+            />
+          </div>
+        </div>
+
+        {/* CTA Buttons */}
+        <div className="hero-cta-row flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 sm:gap-5 w-full">
           {/* Secondary CTA */}
           <TransitionLink
             href="/profile"
             data-cursor="hover"
             ref={btnSecondaryRef as React.Ref<HTMLAnchorElement>}
             className="group relative inline-flex items-center justify-center gap-3 overflow-hidden border border-white/20 bg-transparent px-6 py-3.5 sm:py-4 font-mono text-xs font-bold uppercase tracking-widest text-white transition-all duration-300 hover:border-signal-violet hover:shadow-[0_0_30px_rgba(157,78,221,0.4)] w-full sm:w-auto select-none"
+            aria-label="View profile dossier"
           >
             {/* Fill on hover */}
             <span className="absolute inset-0 bg-signal-violet/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
@@ -227,21 +322,17 @@ export default function Hero() {
             data-cursor="hover"
             ref={btnPrimaryRef as React.Ref<HTMLAnchorElement>}
             className="group relative inline-flex items-center justify-center gap-3 overflow-hidden bg-signal-cyan px-6 sm:px-10 py-3.5 sm:py-4 font-mono text-xs font-black uppercase tracking-[0.18em] text-black shadow-[0_0_30px_rgba(0,240,255,0.5)] transition-all duration-300 hover:shadow-[0_0_60px_rgba(0,240,255,0.9)] w-full sm:w-auto select-none"
+            aria-label="Explore projects portfolio"
           >
             {/* Shimmer sweep */}
             <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 ease-in-out" />
             <span className="relative z-10 transition-transform duration-300 group-hover:-translate-x-1">EXPLORE_PROJECTS</span>
             <span className="relative z-10 text-lg leading-none">↗</span>
           </TransitionLink>
-        </motion.div>
+        </div>
 
         {/* Stats Grid */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.1, duration: 0.8 }}
-          className="mt-8 sm:mt-14 grid grid-cols-2 sm:flex sm:flex-wrap justify-end gap-3 sm:gap-6 border-t border-white/10 pt-5 sm:pt-8 w-full max-w-3xl"
-        >
+        <div className="hero-stats-row mt-8 sm:mt-14 grid grid-cols-2 sm:flex sm:flex-wrap justify-end gap-3 sm:gap-6 border-t border-white/10 pt-5 sm:pt-8 w-full max-w-3xl">
           {QUICK_STATS.map((stat, idx) => (
             <div
               key={idx}
@@ -255,20 +346,20 @@ export default function Hero() {
               </div>
             </div>
           ))}
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        animate={{ y: [0, -8, 0] }}
-        transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
+      {/* Scroll indicator — GSAP bounce */}
+      <div
+        ref={scrollIndicatorRef}
         className="absolute bottom-5 sm:bottom-8 right-4 sm:right-12 z-10 font-mono text-[9px] sm:text-[11px] font-bold tracking-[0.3em] text-gray-500 [writing-mode:vertical-rl] rotate-180 cursor-default hover:text-signal-cyan transition-colors"
+        aria-hidden="true"
       >
         SCROLL_DOWN
-      </motion.div>
+      </div>
 
       {/* Bottom left HUD tag */}
-      <div className="absolute bottom-5 left-4 sm:left-12 font-mono text-[8px] sm:text-[10px] text-gray-700 tracking-widest hidden sm:block">
+      <div className="absolute bottom-5 left-4 sm:left-12 font-mono text-[8px] sm:text-[10px] text-gray-700 tracking-widest hidden sm:block" aria-hidden="true">
         LOC: MEDAN, ID // COORD: 03°35&apos;N 98°40&apos;E
       </div>
     </section>

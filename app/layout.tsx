@@ -77,7 +77,27 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
       className={`${orbitron.variable} ${inter.variable} ${jetbrainsMono.variable} ${notoSansJP.variable}`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": "Ageng Prayoga",
+            "jobTitle": "Frontend Architect and System Engineer",
+            "url": "https://agengprayoga.com",
+            "sameAs": [
+              "https://github.com/Consep33t",
+              "https://linkedin.com/in/ageng-prayoga-789b652a9"
+            ],
+            "knowsAbout": ["Next.js", "TypeScript", "GSAP", "System Design", "IoT", "React", "Vue", "Go"]
+          }) }}
+        />
+      </head>
       <body>
+        <a href="#main-content" className="skip-link">
+          SKIP_TO_CONTENT
+        </a>
         {/* SplashCursor — WebGL fluid, skip on mobile for perf */}
         <SplashCursor />
         <ClickSpark sparkColor="#FF2E9F" sparkSize={10} sparkRadius={25} sparkCount={12} duration={600}>

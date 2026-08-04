@@ -2,6 +2,51 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5.0] - 2026-08-04
+
+### TIER A Completion — Full Framer Motion Removal & Accessibility Hardening
+
+#### Performance: Zero Framer Motion
+- **`components/CircularText.tsx`**: Migrated from `motion.div` + framer rotation to GSAP `gsap.to(rotation: 360, repeat: -1)` with `timeScale` for hover speed control (speedUp/slowDown/pause). Pure GSAP, zero framer dependency.
+- **`components/DecryptedText.tsx`**: Removed `motion.span` wrapper — all animation logic was pure JS interval-based already. Replaced with plain `<span>`. No functionality change; ~140KB bundle saving.
+- **`components/Navigation.tsx`**: Migrated from `AnimatePresence` + `motion.div` mobile drawer and `layoutId` active tab indicator to: CSS `max-height` transition for mobile drawer, CSS positioned `<span>` for active pill, inline `style.transitionDelay` stagger for mobile nav items. Added proper `aria-expanded`, `aria-controls`, `aria-current="page"`, `aria-label` for full keyboard navigation.
+- **`components/Hero.tsx`**: Complete migration from framer `useScroll` + `useTransform` + `useSpring` to GSAP ScrollTrigger parallax (background grid yPercent:15, content yPercent:35 + fade). Replaced all `motion.div` entrance animations with GSAP timeline targeting CSS class selectors. Replaced `animate={{ y: [0,-8,0] }}` scroll indicator with GSAP `yoyo` tween. Added `prefers-reduced-motion` guard.
+
+#### Performance: CSS Rendering
+- **`app/globals.css`**: Added `.cv-auto { content-visibility: auto; contain-intrinsic-size: auto 600px }` utility class for off-screen section paint deferral.
+
+#### Accessibility Hardening
+- **`app/globals.css`**: Global `@media (prefers-reduced-motion: reduce)` block silences all `animation` and `transition` durations project-wide (`0.01ms !important`).
+- **`app/globals.css`**: Added `:focus-visible` keyboard indicator (`2px solid signal-cyan`, offset: 3px) and `:focus:not(:focus-visible) { outline: none }` to suppress mouse focus rings.
+- **`components/Navigation.tsx`**: Full ARIA audit — `aria-label`, `aria-expanded`, `aria-controls`, `aria-current="page"`, `role="menubar"`, `role="menuitem"` on all nav elements.
+- **`components/Hero.tsx`**: Added `aria-label` on section, `aria-hidden="true"` on decorative elements (scroll indicator, HUD coord tag), `aria-label` on CTA buttons.
+- **`app/layout.tsx`**: Skip-to-content link (`#main-content`) already present from prior session — confirmed intact.
+
+#### Empirical Verification
+- TypeScript: `✓ Finished TypeScript in 6.9s` — zero type errors
+- Build: `✓ Generating static pages (9/9)` — exit code 0
+- Framer-motion grep: **zero remaining imports** across all `.tsx`/`.ts` files
+
+## [1.4.0] - 2026-08-04
+
+### TIER A Implementation (Day 4) — Completed
+- **Profile Page Bento Grid Redesign (`app/profile/page.tsx`)**: Full layout overhaul from monotone column stack to a responsive 12-column CSS Bento Grid with 8 interactive cells: Avatar+Bio identity panel, Tech Stack module badges, GitHub Stats metrics, Contact Links with one-click email copy, Career Goal & Bio prose, Experience Timeline quick view, IoT Skripsi thesis panel, and interactive Terminal Console. GSAP staggered entrance animations on all cells.
+- **Error Boundary (`app/error.tsx`)**: Created HUD-style error page with canvas-based scanline glitch effect, red grid background, terminal-style trace log (error name, digest, message), and dual action buttons (Retry Connection / Return to Base). Zero Framer Motion dependency.
+- **Framer Motion Migration (`app/not-found.tsx`, `app/cyber-hack/page.tsx`)**: Removed all `framer-motion` imports and `motion.*` components from these two pages. Replaced with CSS `animate-fade-in`, `transition-all`, `hover:`, and CSS `width` transitions. Bundle size reduced.
+- **Empirical Verification**: Built and verified successful Next.js 16.2.12 Turbopack compile and TypeScript type checks passing with exit code 0. All 9 pages generated successfully.
+
+## [1.3.0] - 2026-08-04
+
+### TIER A Implementation (Day 1 - Day 3) — Completed
+- **SplashCursor Mobile Guard**: Disabled WebGL SplashCursor on touch/coarse devices to save ~3MB RAM and prevent GPU throttling.
+- **Noise/Grain Texture Overlay**: Added subtle SVG-based noise overlay globally in `app/globals.css` for enhanced material aesthetic.
+- **JSON-LD Structured Data**: Injected search-engine optimization schema for Ageng Prayoga in `app/layout.tsx`.
+- **Variable Font Animations**: Wired font-variation animations (.breathe-text) to hero and major section headings across homepage, profile, and project pages.
+- **Interactive Footer Redesign**: Added canvas-based Matrix ASCII rain (gated by IntersectionObserver for low-resource footprint), magnetic hover buttons for ascension/socials/email, copyright counter rising to 2026, and click-to-copy email with HUD status toast feedback.
+- **Project Card Skeleton Loaders**: Created `components/ProjectCardSkeleton.tsx` matching card layouts, and integrated it into `/projects` as Suspense fallback for the repository fetch grid.
+- **Scroll-Driven Transitions**: Applied `.scroll-driven-fade` entry animations globally to home page sections using native CSS scroll timelines.
+- **Empirical Verification**: Built and verified successful Next.js compile and type checks passing with exit code 0.
+
 ## [1.2.0] - 2026-08-03
 
 ### Full Repositories Showcase & Profile Avatar Integration

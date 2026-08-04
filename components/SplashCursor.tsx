@@ -1,7 +1,7 @@
 // @ts-nocheck
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface SplashCursorProps {
   SIM_RESOLUTION?: number;
@@ -42,8 +42,15 @@ function SplashCursor({
 }: SplashCursorProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationFrameId = useRef<number | null>(null);
+  // Skip entirely on touch/mobile — saves a WebGL context and ~3MB memory
+  const [isPointerFine, setIsPointerFine] = useState(false);
 
   useEffect(() => {
+    setIsPointerFine(window.matchMedia('(pointer: fine)').matches);
+  }, []);
+
+  useEffect(() => {
+    if (!isPointerFine) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -1077,7 +1084,10 @@ function SplashCursor({
       window.removeEventListener('touchend', handleTouchEnd);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isPointerFine]);
+
+  // Zero render cost on touch devices
+  if (!isPointerFine) return null;
 
   return (
     <div

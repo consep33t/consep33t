@@ -84,7 +84,7 @@ export default function ExperienceSection() {
           <span className="h-2 w-2 rounded-full bg-signal-cyan animate-pulse shadow-[0_0_10px_#00F0FF]" />
           <span>// CHRONO_LOGS</span>
         </div>
-        <h2 className="font-display text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter text-white mb-4 sm:mb-6 relative z-10 break-words">
+        <h2 className="font-display text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter text-white mb-4 sm:mb-6 relative z-10 break-words breathe-text">
           <GlitchText text="COMBAT" />
           <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-signal-cyan to-signal-pink">
