@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.0] - 2026-08-04
+
+### TIER B Advanced Features — Particle Trail & Realtime GitHub Telemetry
+- **Interactive Particle Trail Canvas (`components/CustomCursor.tsx`)**: Upgraded custom cursor with a dynamic WebGL-style 2D canvas particle trail system. Spawns glowing particles that fade and shrink on mouse movement with contextual color matching.
+- **GitHub Realtime Telemetry API (`app/api/activity/route.ts`)**: Built serverless endpoint fetching real-time public GitHub event logs (`Consep33t`) with a 5-minute cache and graceful fallback.
+- **Bento Grid Terminal Feed (`app/profile/page.tsx`)**: Integrated real-time GitHub telemetry directly into the profile dossier's Terminal Console.
+- **Empirical Verification**: Built and verified Next.js 16.2.12 Turbopack compile (`npm run build`) passing 100% with exit code 0 across all 10 routes.
+
+## [2.0.0] - 2026-08-04
+
+### TIER B Implementation — Three.js / React Three Fiber 3D Hero Section
+- **Holographic Wireframe 3D Hero (`components/canvas/HeroCanvas.tsx`)**: Built interactive 3D hero canvas using `@react-three/fiber`, `@react-three/drei`, and `@react-three/postprocessing`.
+  - **HoloOctahedron**: Distorted 3D wireframe mesh with `MeshDistortMaterial`, continuous rotation, inner glowing sphere, and `Float` animation.
+  - **Particle Universe**: 2.000 dynamic particle field revolving in 3D space on the GPU.
+  - **Cyberpunk Post-Processing**: Full `EffectComposer` pipeline with Bloom (luminance threshold 0.15), Chromatic Aberration, and periodic Glitch effects.
+  - **Performance Guard**: Dynamic import with `ssr: false` in `Hero.tsx`, DPR scaled `[0.75, 1.5]`, and auto-hidden on mobile screens (`hidden lg:block`).
+- **Empirical Verification**: Built and verified Next.js 16.2.12 Turbopack compile (`npm run build`) passing 100% with exit code 0 across all 9 pages.
+
 ## [1.5.0] - 2026-08-04
 
 ### TIER A Completion — Full Framer Motion Removal & Accessibility Hardening

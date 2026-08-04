@@ -96,10 +96,14 @@ export default function RootLayout({
       </head>
       <body>
         <a href="#main-content" className="skip-link">
-          SKIP_TO_CONTENT
+          Skip to main content
         </a>
         {/* SplashCursor — WebGL fluid, skip on mobile for perf */}
         <SplashCursor />
+        {/* ClickSpark wraps content but must NOT constrain height.
+            The canvas inside ClickSpark is position:absolute so it
+            does not affect document flow. The wrapper div must not
+            create a fixed-height containing block or ScrollSmoother breaks. */}
         <ClickSpark sparkColor="#FF2E9F" sparkSize={10} sparkRadius={25} sparkCount={12} duration={600}>
           {/* Custom cursor only shows on pointer:fine (mouse) devices via CSS in CustomCursor */}
           <CustomCursor />

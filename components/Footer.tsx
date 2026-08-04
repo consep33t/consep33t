@@ -163,49 +163,50 @@ export default function Footer() {
     };
   }, []);
 
-  // Magnetic Button Effect Hook-up
-  const setupMagnetic = (ref: React.RefObject<HTMLElement | null>, strength = 0.3) => {
-    useEffect(() => {
+  // Magnetic Button Effect — single useEffect for all magnetic elements
+  // (previously a helper function calling useEffect = Rules of Hooks violation)
+  useEffect(() => {
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+
+    const magneticEntries: Array<{ ref: React.RefObject<HTMLElement | null>; strength: number }> = [
+      { ref: magneticRefs.top as React.RefObject<HTMLElement | null>, strength: 0.4 },
+      { ref: magneticRefs.github as React.RefObject<HTMLElement | null>, strength: 0.35 },
+      { ref: magneticRefs.email as React.RefObject<HTMLElement | null>, strength: 0.35 },
+    ];
+
+    const cleanupFns: (() => void)[] = [];
+
+    magneticEntries.forEach(({ ref, strength }) => {
       const el = ref.current;
-      if (!el || window.matchMedia("(pointer: coarse)").matches) return;
+      if (!el) return;
 
       const handleMouseMove = (e: MouseEvent) => {
         const rect = el.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
-        const distanceX = e.clientX - centerX;
-        const distanceY = e.clientY - centerY;
-
         gsap.to(el, {
-          x: distanceX * strength,
-          y: distanceY * strength,
+          x: (e.clientX - centerX) * strength,
+          y: (e.clientY - centerY) * strength,
           duration: 0.3,
           ease: "power2.out",
         });
       };
 
       const handleMouseLeave = () => {
-        gsap.to(el, {
-          x: 0,
-          y: 0,
-          duration: 0.5,
-          ease: "elastic.out(1, 0.3)",
-        });
+        gsap.to(el, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1, 0.3)" });
       };
 
       el.addEventListener("mousemove", handleMouseMove);
       el.addEventListener("mouseleave", handleMouseLeave);
-
-      return () => {
+      cleanupFns.push(() => {
         el.removeEventListener("mousemove", handleMouseMove);
         el.removeEventListener("mouseleave", handleMouseLeave);
-      };
-    }, [ref, strength]);
-  };
+      });
+    });
 
-  setupMagnetic(magneticRefs.top, 0.4);
-  setupMagnetic(magneticRefs.github, 0.35);
-  setupMagnetic(magneticRefs.email, 0.35);
+    return () => cleanupFns.forEach((fn) => fn());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <footer

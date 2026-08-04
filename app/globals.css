@@ -77,6 +77,43 @@ body {
   transform: translateZ(0);
 }
 
+/* =============================================================
+   CUSTOM CURSOR: Hide native cursor on all elements when active
+   ============================================================= */
+body.cursor-active,
+body.cursor-active *,
+body.cursor-active *::before,
+body.cursor-active *::after {
+  cursor: none !important;
+}
+
+/* =============================================================
+   SCROLL SMOOTHER: Required wrapper/content CSS
+   ScrollSmoother needs wrapper to be fixed-height viewport
+   ============================================================= */
+#smooth-wrapper {
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+}
+
+#smooth-content {
+  overflow: visible;
+  width: 100%;
+}
+
+/* Touch/mobile: fall back to normal scroll */
+@media (pointer: coarse) {
+  #smooth-wrapper {
+    position: static;
+    height: auto;
+    overflow: visible;
+  }
+}
+
 /* SVG Grain/Noise overlay */
 body::after {
   content: '';
@@ -133,10 +170,19 @@ img, video, svg, canvas {
 /* Modern Typography Improvements (per Modern Web Guidance) */
 h1, h2, h3, h4, h5, h6 {
   text-wrap: balance;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 p, li, blockquote {
   text-wrap: pretty;
+  overflow-wrap: break-word;
+}
+
+/* Long single words / codes that must not overflow */
+.break-anywhere {
+  overflow-wrap: anywhere;
+  word-break: break-all;
 }
 
 ::selection {
@@ -391,6 +437,23 @@ p, li, blockquote {
 /* Performance: contain compositing layers for animated elements */
 .will-change-transform {
   will-change: transform;
+}
+
+/* Pause all animations when page is not visible (tab switch) */
+@media (prefers-reduced-motion: no-preference) {
+  /* JS sets this class via visibilitychange API */
+  .page-hidden * {
+    animation-play-state: paused !important;
+  }
+}
+
+/* Animate-fade-in utility used by Footer toast */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fade-in 0.35s ease-out both;
 }
 
 /* Spin slow utility */

@@ -60,7 +60,8 @@ export default function WelcomeLoader() {
 
       const particles: { x: number; y: number; vx: number; vy: number; r: number; alpha: number; color: string }[] = [];
       const COLORS = ["#00F0FF", "#FF2E9F", "#9D4EDD", "#fcee0a"];
-      for (let i = 0; i < 80; i++) {
+      // Reduced from 80 to 40: connecting lines is O(n²), 40 particles = 1600 checks/frame vs 6400
+      for (let i = 0; i < 40; i++) {
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
@@ -71,6 +72,8 @@ export default function WelcomeLoader() {
           color: COLORS[Math.floor(Math.random() * COLORS.length)],
         });
       }
+
+      const CONNECT_DIST_SQ = 100 * 100; // pre-compute squared distance to avoid sqrt in hot path
 
       const drawParticles = () => {
         if (!ctx2d || !canvas) return;
@@ -91,19 +94,19 @@ export default function WelcomeLoader() {
           ctx2d.globalAlpha = 1;
         });
 
-        // draw connecting lines
+        // draw connecting lines using squared distance (avoids sqrt per pair)
+        ctx2d.strokeStyle = "#00F0FF";
+        ctx2d.lineWidth = 0.5;
         for (let i = 0; i < particles.length; i++) {
           for (let j = i + 1; j < particles.length; j++) {
             const dx = particles[i].x - particles[j].x;
             const dy = particles[i].y - particles[j].y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 100) {
+            const distSq = dx * dx + dy * dy;
+            if (distSq < CONNECT_DIST_SQ) {
               ctx2d.beginPath();
               ctx2d.moveTo(particles[i].x, particles[i].y);
               ctx2d.lineTo(particles[j].x, particles[j].y);
-              ctx2d.strokeStyle = "#00F0FF";
-              ctx2d.globalAlpha = (1 - dist / 100) * 0.15;
-              ctx2d.lineWidth = 0.5;
+              ctx2d.globalAlpha = (1 - Math.sqrt(distSq) / 100) * 0.15;
               ctx2d.stroke();
               ctx2d.globalAlpha = 1;
             }

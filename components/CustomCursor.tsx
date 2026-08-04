@@ -3,10 +3,23 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
+interface Particle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  size: number;
+  color: string;
+  alpha: number;
+  life: number;
+  maxLife: number;
+}
+
 export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const isFinePointer = window.matchMedia("(pointer: fine)").matches;
@@ -15,7 +28,54 @@ export default function CustomCursor() {
     const cursor = cursorRef.current;
     const ring = ringRef.current;
     const label = labelRef.current;
-    if (!cursor || !ring || !label) return;
+    const canvas = canvasRef.current;
+    if (!cursor || !ring || !label || !canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let animId: number;
+    const particles: Particle[] = [];
+    const COLORS = ["#00F0FF", "#FF2E9F", "#9D4EDD", "#FCEE0A"];
+
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    // Render loop for particle trail
+    const renderParticles = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life++;
+        p.alpha = 1 - p.life / p.maxLife;
+        p.size *= 0.95;
+
+        if (p.life >= p.maxLife || p.size <= 0.2) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.alpha * 0.7);
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      animId = requestAnimationFrame(renderParticles);
+    };
+    animId = requestAnimationFrame(renderParticles);
 
     // Hide cursor elements initially until first mouse move
     gsap.set([cursor, ring, label], { autoAlpha: 0 });
@@ -32,6 +92,8 @@ export default function CustomCursor() {
 
     let isHovering = false;
     let isVisible = false;
+    let lastX = 0;
+    let lastY = 0;
 
     const showCursors = () => {
       if (!isVisible) {
@@ -49,6 +111,25 @@ export default function CustomCursor() {
       yRing(clientY);
       xLabel(clientX);
       yLabel(clientY);
+
+      // Spawn trail particle if moved significantly
+      const dist = Math.hypot(clientX - lastX, clientY - lastY);
+      if (dist > 4 && particles.length < 50) {
+        const color = isHovering ? "#FF2E9F" : COLORS[Math.floor(Math.random() * COLORS.length)];
+        particles.push({
+          x: clientX,
+          y: clientY,
+          vx: (Math.random() - 0.5) * 1.5,
+          vy: (Math.random() - 0.5) * 1.5,
+          size: Math.random() * 2.5 + 1.5,
+          color,
+          alpha: 1,
+          life: 0,
+          maxLife: Math.floor(Math.random() * 20) + 15,
+        });
+        lastX = clientX;
+        lastY = clientY;
+      }
 
       const target = e.target as HTMLElement;
       const hoverEl = target.closest('a, button, input, textarea, [data-cursor="hover"]');
@@ -120,20 +201,42 @@ export default function CustomCursor() {
     window.addEventListener("mouseup", handleMouseUp, { passive: true });
     document.documentElement.addEventListener("mouseleave", handleMouseLeave);
     document.documentElement.addEventListener("mouseenter", handleMouseEnter);
-    document.body.style.cursor = "none";
+    // Use CSS class so ALL elements (including Tailwind/browser defaults) hide native cursor
+    document.body.classList.add("cursor-active");
+
+    // Pause particle animation when tab is not visible (performance)
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(animId);
+      } else {
+        animId = requestAnimationFrame(renderParticles);
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", resizeCanvas);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mousedown", handleMouseDown);
       window.removeEventListener("mouseup", handleMouseUp);
       document.documentElement.removeEventListener("mouseleave", handleMouseLeave);
       document.documentElement.removeEventListener("mouseenter", handleMouseEnter);
-      document.body.style.cursor = "auto";
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      // Restore native cursor on cleanup
+      document.body.classList.remove("cursor-active");
     };
-  }, []); // ← Fixed: no dependency on isHovering (local var instead)
+  }, []);
 
   return (
     <>
+      {/* Particle Trail Canvas */}
+      <canvas
+        ref={canvasRef}
+        className="pointer-events-none fixed inset-0 z-[9997]"
+        aria-hidden="true"
+      />
+
       {/* Center Dot */}
       <div
         ref={cursorRef}
@@ -159,3 +262,4 @@ export default function CustomCursor() {
     </>
   );
 }
+

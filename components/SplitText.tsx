@@ -172,12 +172,15 @@ const SplitText = ({
   );
 
   const renderTag = () => {
-    const style = {
+    const style: React.CSSProperties = {
       textAlign,
-      overflow: 'hidden',
-      display: 'inline-block',
+      // Use block display so the element fills its container and doesn't collapse.
+      // inline-block caused text to overflow its container when parent is flex/grid.
+      display: 'block',
       whiteSpace: 'normal',
       wordWrap: 'break-word',
+      overflowWrap: 'break-word',
+      wordBreak: 'break-word',
       willChange: 'transform, opacity'
     };
     const classes = `split-parent ${className}`;

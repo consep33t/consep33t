@@ -150,7 +150,10 @@ const ClickSpark = ({
       style={{
         position: 'relative',
         width: '100%',
-        height: '100%'
+        // NOTE: do NOT set height here — height:100% would constrain
+        // the document height and break ScrollSmoother's scroll calculation.
+        // The canvas is position:absolute so it doesn't affect layout.
+        minHeight: 0,
       }}
       onClick={handleClick}
     >

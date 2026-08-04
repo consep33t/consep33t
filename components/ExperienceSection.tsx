@@ -47,12 +47,14 @@ export default function ExperienceSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
-    if (!containerRef.current) return;
-    
-    const items = gsap.utils.toArray<HTMLElement>('.exp-item');
-    
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Scope to containerRef so we only target items within this section
+    const items = gsap.utils.toArray<HTMLElement>('.exp-item', container);
+
     items.forEach((item) => {
-      gsap.fromTo(item, 
+      gsap.fromTo(item,
         { opacity: 0, y: 50, rotateX: 15 },
         {
           opacity: 1,
@@ -63,8 +65,8 @@ export default function ExperienceSection() {
           scrollTrigger: {
             trigger: item,
             start: "top 85%",
-            toggleActions: "play none none reverse"
-          }
+            toggleActions: "play none none reverse",
+          },
         }
       );
     });

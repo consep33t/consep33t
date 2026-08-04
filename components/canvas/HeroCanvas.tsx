@@ -48,10 +48,17 @@ function ParticleField() {
 
   const positions = useMemo(() => {
     const arr = new Float32Array(COUNT * 3);
+    // Simple deterministic pseudo-random generator to avoid Math.random during render
+    let seed = 42;
+    const pseudoRandom = () => {
+      seed = (seed * 9301 + 49297) % 233280;
+      return seed / 233280;
+    };
+
     for (let i = 0; i < COUNT; i++) {
-      arr[i * 3 + 0] = (Math.random() - 0.5) * 12;
-      arr[i * 3 + 1] = (Math.random() - 0.5) * 12;
-      arr[i * 3 + 2] = (Math.random() - 0.5) * 12;
+      arr[i * 3 + 0] = (pseudoRandom() - 0.5) * 12;
+      arr[i * 3 + 1] = (pseudoRandom() - 0.5) * 12;
+      arr[i * 3 + 2] = (pseudoRandom() - 0.5) * 12;
     }
     return arr;
   }, []);

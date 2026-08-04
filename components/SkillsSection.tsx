@@ -48,13 +48,15 @@ export default function SkillsSection() {
     : SKILLS.filter(s => s.category === activeCategory);
 
   useEffect(() => {
-    if (!containerRef.current) return;
-    
-    const bars = gsap.utils.toArray<HTMLElement>('.skill-bar-fill');
-    
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Scope selector to containerRef to avoid grabbing bars from other sections
+    const bars = gsap.utils.toArray<HTMLElement>('.skill-bar-fill', container);
+
     bars.forEach((bar) => {
       const width = bar.getAttribute('data-width');
-      gsap.fromTo(bar, 
+      gsap.fromTo(bar,
         { width: "0%" },
         {
           width: `${width}%`,
@@ -63,11 +65,18 @@ export default function SkillsSection() {
           scrollTrigger: {
             trigger: bar,
             start: "top 95%",
-            toggleActions: "play none none reverse"
-          }
+            toggleActions: "play none none reverse",
+          },
         }
       );
     });
+
+    // Cleanup scroll triggers when category changes or unmount
+    return () => {
+      ScrollTrigger.getAll().forEach((st) => {
+        if (container.contains(st.trigger as Node)) st.kill();
+      });
+    };
   }, [activeCategory]);
 
   return (

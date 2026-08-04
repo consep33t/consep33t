@@ -22,10 +22,15 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     const smoother = ScrollSmoother.create({
       wrapper: "#smooth-wrapper",
       content: "#smooth-content",
-      smooth: 1.0,          // slightly reduced for snappier feel
+      smooth: 0.8,          // slightly reduced for snappier feel (was 1.0)
       effects: true,
-      normalizeScroll: false, // keep native scroll on mobile
+      normalizeScroll: true, // normalize scroll events across browsers for consistency
+      ignoreMobileResize: true, // prevent scroll jumps on mobile address bar resize
     });
+
+    // Refresh ScrollTrigger after smoother is created so all pinned
+    // sections and scroll-based animations are correctly positioned
+    ScrollTrigger.refresh();
 
     return () => smoother.kill();
   }, []);

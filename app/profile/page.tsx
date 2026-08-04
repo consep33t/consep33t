@@ -55,6 +55,18 @@ export default function ProfilePage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [terminalIndex, setTerminalIndex] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [githubEvents, setGithubEvents] = useState<{ detail: string; repoName: string; createdAt: string }[]>([]);
+
+  useEffect(() => {
+    fetch("/api/activity")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.events?.length) {
+          setGithubEvents(data.events);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const copyEmail = () => {
     navigator.clipboard.writeText("agengp360@gmail.com");
@@ -329,7 +341,7 @@ export default function ProfilePage() {
                 <span className="w-3 h-3 rounded-full bg-red-500/80" />
                 <span className="w-3 h-3 rounded-full bg-yellow-500/80" />
                 <span className="w-3 h-3 rounded-full bg-green-500/80" />
-                <span className="text-gray-400 ml-2 text-[10px] sm:text-xs">// SYSTEM_CONSOLE_LOG</span>
+                <span className="text-gray-400 ml-2 text-[10px] sm:text-xs">// SYSTEM_CONSOLE_LOG // LIVE_FEED</span>
               </div>
               <button
                 onClick={() => setTerminalIndex((prev) => (prev + 1) % TERMINAL_COMMANDS.length)}
@@ -347,7 +359,20 @@ export default function ProfilePage() {
               <p className="text-signal-yellow pl-2 sm:pl-4 break-words">
                 &gt; <DecryptedText text={TERMINAL_COMMANDS[terminalIndex].output} speed={25} />
               </p>
-              <p className="text-green-400 pl-2 sm:pl-4">&gt; STATUS: EXECUTION_SUCCESSFUL [0 ERRORS]</p>
+              
+              {/* GitHub Realtime Activity Feed */}
+              {githubEvents.length > 0 && (
+                <div className="mt-3 pt-3 border-t border-white/5 space-y-1">
+                  <p className="text-gray-500 text-[10px] uppercase tracking-widest">// RECENT_GITHUB_TELEMETRY:</p>
+                  {githubEvents.slice(0, 2).map((ev, i) => (
+                    <p key={i} className="text-gray-400 text-[10px] pl-2 sm:pl-4 truncate">
+                      <span className="text-signal-cyan">[{ev.repoName}]</span> {ev.detail}
+                    </p>
+                  ))}
+                </div>
+              )}
+
+              <p className="text-green-400 pl-2 sm:pl-4 mt-2">&gt; STATUS: EXECUTION_SUCCESSFUL [0 ERRORS]</p>
               <p className="text-signal-cyan animate-pulse">_</p>
             </div>
           </div>
