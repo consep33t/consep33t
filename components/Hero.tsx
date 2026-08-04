@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import DecryptedText from "./DecryptedText";
 import GlitchText from "./GlitchText";
@@ -11,6 +12,12 @@ import Triangulation from "./Triangulation";
 import { TransitionLink } from "./PageTransition";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// 3D Canvas — loaded only on client, SSR disabled
+const HeroCanvas = dynamic(() => import("./canvas/HeroCanvas"), {
+  ssr: false,
+  loading: () => null, // No flash during hydration
+});
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -200,6 +207,9 @@ export default function Hero() {
     >
       {/* Background Triangulation & Grid */}
       <Triangulation />
+
+      {/* 3D Canvas — desktop only, pointer:fine (avoids mobile GPU cost) */}
+      <HeroCanvas className="pointer-events-none absolute inset-0 z-0 hidden lg:block opacity-80" />
 
       {/* Parallax grid bg */}
       <div
